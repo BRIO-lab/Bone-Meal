@@ -1,4 +1,4 @@
-name: base
+name: jtml
 channels:
   - defaults
 dependencies:
@@ -131,4 +131,4 @@ dependencies:
       - typing-extensions==4.4.0
       - wandb==0.13.9
       - yarl==1.8.2
-prefix: C:\Users\echen\miniconda3
+prefix: C:\Users\curra\miniconda3

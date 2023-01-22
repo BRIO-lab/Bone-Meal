@@ -7,3 +7,11 @@ lightning_logs/*
 wandb/*
 *.nsys-rep
 *.sqlite
+
+# HRFormer resources
+HRFormer/seg/data
+HRFormer/seg/pretrained_model
+HRFormer/seg/configs/*
+HRFormer/seg/scripts/*
+!HRFormer/seg/configs/jtml
+!HRFormer/seg/scripts/jtml
