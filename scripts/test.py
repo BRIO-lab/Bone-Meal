@@ -39,11 +39,12 @@ def main(config, wandb_run):
     # Since we are using an architecure written in PyTorch (PoseHRNet), we feed that architecture in.
     # We also pass our wandb_run object to we can log.
     if config.datamodule['CKPT_FILE'] != None:
-        model = SegmentationNetModule.load_from_checkpoint(config.datamodule['CKPT_FILE'], pose_hrnet=pose_hrnet, wandb_run=wandb_run)
+        model = SegmentationNetModule.load_from_checkpoint(config.datamodule['CKPT_FILE'], config=config, wandb_run=wandb_run)
         print('Checkpoint file loaded from ' + config.datamodule['CKPT_FILE'])
     elif config.datamodule['CKPT_FILE'] == None:
+        print('No checkpoint file specified. Loading from default location at ' + CKPT_DIR + config.init['WANDB_RUN_GROUP'] + '/' + config.init['MODEL_NAME'] +'.ckpt')
         try:
-            model = SegmentationNetModule.load_from_checkpoint(CKPT_DIR + config.init['WANDB_RUN_GROUP'] + '/' + config.init['MODEL_NAME'] +'.ckpt', pose_hrnet=pose_hrnet, wandb_run=wandb_run)
+            model = SegmentationNetModule.load_from_checkpoint(CKPT_DIR + config.init['WANDB_RUN_GROUP'] + '/' + config.init['MODEL_NAME'] +'.ckpt', config=config, wandb_run=wandb_run)
         except:
             print("No checkpoint .ckpt file in default location at " + CKPT_DIR + config.init['WANDB_RUN_GROUP'] + '/' + config.init['MODEL_NAME'] +'.ckpt')
     #model = MyLightningModule(pose_hrnet=pose_hrnet, wandb_run=wandb_run)
