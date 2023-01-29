@@ -9,8 +9,8 @@ import torch.nn.functional as F
 from .modules.bottleneck_block import Bottleneck, BottleneckDWP
 from .modules.transformer_block import GeneralTransformerBlock
 
-from lib.models.tools.module_helper import ModuleHelper
-from lib.utils.tools.logger import Logger as Log
+#from lib.models.tools.module_helper import ModuleHelper
+#from lib.utils.tools.logger import Logger as Log
 
 blocks_dict = {
     "BOTTLENECK": Bottleneck,

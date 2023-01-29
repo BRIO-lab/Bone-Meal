@@ -5,7 +5,7 @@ import numpy as np
 import pytorch_lightning as pl
 import wandb
 
-from models.backbones.hrt import HighResolutionTransformer  # may want to change import statement
+from models.backbones.hrt.hrt_backbone import HighResolutionTransformer  # may want to change import statement
 
 # cobbling together hrt for now TODO: Cleanup
 class SegmentationNetModule(pl.LightningModule):    
