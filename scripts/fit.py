@@ -11,7 +11,6 @@ import torch
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
-from pose_hrnet_module import SegmentationNetModule, PoseHighResolutionNet
 from datamodule import SegmentationDataModule
 from callbacks import JTMLCallback
 from utility import create_config_dict
@@ -20,6 +19,8 @@ import sys
 import os
 import time
 import wandb
+from build import build_model 
+# want to refactor more
 
 
 """
@@ -35,9 +36,14 @@ def main(config, wandb_run):
     
     # This is our LightningModule, which where the architecture is supposed to go.
     # Since we are using an architecure written in PyTorch (PoseHRNet), we feed that architecture in.
-    # We also pass our wandb_run object to we can log.
-    model = SegmentationNetModule(config=config, wandb_run=wandb_run) # I can put some data module stuff in this argument if I want
-
+    # We also pass our wandb_run object so we can log.
+    #model = SegmentationNetModule(config=config, wandb_run=wandb_run) # I can put some data module stuff in this argument if I want
+    """
+    Call to Build is made here
+    modified by Engut (the one presently writing this)
+    """
+    
+    model = build_model(config=config, wandb_run=wandb_run)
     # This is a callback that should help us with stopping validation when it's time but isn't working.
     save_best_val_checkpoint_callback = ModelCheckpoint(monitor='validation/loss',
                                                         mode='min',
@@ -75,16 +81,20 @@ def main(config, wandb_run):
     wandb_run.config.update({'Model Save Directory': CKPT_DIR + config.init['WANDB_RUN_GROUP'] + '/' + config.init['MODEL_NAME'] + '.ckpt'})
 
 if __name__ == '__main__':
+    
 
     ## Setting up the config
     # Parsing the config file
     CONFIG_DIR = os.getcwd() + '/config/'
     sys.path.append(CONFIG_DIR)
-    config_module = import_module(sys.argv[1])
 
+    model_selection = input("Select model_type (fem or hrt):\n")    
+    if (model_selection == 'fem'):
+        config_module = import_module(sys.argv[1])
+    else:
+        config_module = import_module('hrt/config_hrt.py') # TODO: Import from config file for hrt
     # Instantiating the config file
     config = config_module.Configuration()
-
     # Setting the checkpoint directory
     CKPT_DIR = os.getcwd() + '/checkpoints/'
 
@@ -103,8 +113,10 @@ if __name__ == '__main__':
         #dir='logs/'
         #save_dir='/logs/'
     )
+    #wandb_placeholder = wandb.init()
 
     main(config, wandb_run)
+    #main(config, wandb_placeholder)
 
     # Sync and close the Wandb logging. Good to have for DDP, I believe.
     wandb.finish()

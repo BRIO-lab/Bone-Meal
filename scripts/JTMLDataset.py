@@ -21,7 +21,7 @@ class LitJTMLDataset(Dataset):
 
         self.config = config
         self.transform = self.config.transform
-        #self.img_dir = '/media/sasank/LinuxStorage/Dropbox (UFL)/Canine Kinematics Data/TPLO_Ten_Dogs_grids'
+        #self.img_dir = '../../../ImageSegmentation/Img/TPLO_Ten_Dogs_grids'
         self.img_dir = img_dir
         #self.img_dir = '/blue/banks/sasank.desaraju/Sasank_JTML_seg/Images/TPLO_Tend_Dogs_grids_2_22_22'
         #self.data_dir = ''  # I don't know if this will actually get used if I pass in a loaded dataset

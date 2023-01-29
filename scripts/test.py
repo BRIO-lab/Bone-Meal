@@ -11,7 +11,8 @@ import torch
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
-from pose_hrnet_module import SegmentationNetModule, PoseHighResolutionNet
+#from pose_hrnet_module import SegmentationNetModule, PoseHighResolutionNet
+from models import SegmentationNetModule, PoseHighResolutionNet
 from datamodule import SegmentationDataModule
 from callbacks import JTMLCallback
 from utility import create_config_dict
