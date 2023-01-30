@@ -92,7 +92,7 @@ if __name__ == '__main__':
     if (model_selection == 'fem'):
         config_module = import_module(sys.argv[1])
     else:
-        config_module = import_module('hrt/config_hrt.py') # TODO: Import from config file for hrt
+        config_module = import_module('hrt.config_hrt') # TODO: Import from config file for hrt
     # Instantiating the config file
     config = config_module.Configuration()
     # Setting the checkpoint directory
