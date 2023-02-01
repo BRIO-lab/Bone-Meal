@@ -88,8 +88,8 @@ if __name__ == '__main__':
     CONFIG_DIR = os.getcwd() + '/config/'
     sys.path.append(CONFIG_DIR)
 
-    model_selection = input("Select model_type (fem or hrt):\n")    
-    if (model_selection == 'fem'):
+    model_selection = input("Select model_type (hrnet or hrt):\n")    
+    if (model_selection == 'hrnet'):
         config_module = import_module(sys.argv[1])
     else:
         config_module = import_module('hrt.config_hrt') # TODO: Import from config file for hrt
