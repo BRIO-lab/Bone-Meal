@@ -1,4 +1,4 @@
-name: base
+name: jtml
 channels:
   - defaults
 dependencies:

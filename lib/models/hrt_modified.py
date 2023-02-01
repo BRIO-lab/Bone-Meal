@@ -11,8 +11,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from models.modules.bottleneck_block import Bottleneck, BottleneckDWP
-from models.modules.transformer_block import GeneralTransformerBlock
+from modules.bottleneck_block import Bottleneck, BottleneckDWP
+from modules.transformer_block import GeneralTransformerBlock
 
 
 blocks_dict = {
