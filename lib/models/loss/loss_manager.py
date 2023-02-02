@@ -21,7 +21,7 @@ from lib.loss.rmi_loss import RMILoss
 from lib.utils.tools.logger import Logger as Log
 from lib.utils.distributed import is_distributed
 
-
+# TODO: add imports for the loss functions in loss.py. Add common names to this dict
 SEG_LOSS_DICT = {
     'fs_ce_loss': FSCELoss,
     'fs_ohemce_loss': FSOhemCELoss,
@@ -33,6 +33,8 @@ SEG_LOSS_DICT = {
 }
 
 
+# TODO: Alter this class to use the config file's option to query the above dict and construct the loss function according to the indicated choice.
+# The config will store the loss function option in self.net['LOSS']
 class LossManager(object):
     def __init__(self, configer):
         self.configer = configer

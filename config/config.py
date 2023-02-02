@@ -67,8 +67,9 @@ class Configuration:
         }
         
         self.net = {
-            'BACKBONE': 0, # the name of the model in the build_model function.
-            'MODULES' : 0   # 
+            'BACKBONE': 'place_holder', # the name of the backbone used in back_bone selector. 
+            'MODULES' : 'fake',  # list of modules to place on top of the backbone. skeleton of support pending.
+            'LOSS' :  'not_real' # See lib/models/loss/loss_manager.py
         }
 
         self.transform = \
