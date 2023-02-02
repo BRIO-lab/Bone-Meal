@@ -69,7 +69,14 @@ class Configuration:
         self.net = {
             'BACKBONE': 'place_holder', # the name of the backbone used in back_bone selector. 
             'MODULES' : 'fake',  # list of modules to place on top of the backbone. skeleton of support pending.
-            'LOSS' :  'not_real' # See lib/models/loss/loss_manager.py
+            'LOSS' :  'fs_ce_loss' # See lib/models/loss/loss_manager.py
+        }
+        
+        # Params for FSCELoss
+        self.fs_ce_loss = {
+            'ce_weight' : -1,
+            'ce_reduction' : -1,
+            'ce_ignore_index': -1
         }
 
         self.transform = \
