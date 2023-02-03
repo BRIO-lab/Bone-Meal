@@ -42,7 +42,6 @@ def main(config, wandb_run):
     Call to Build is made here
     modified by Engut (the one presently writing this)
     """
-    
     model = build_model(config=config, wandb_run=wandb_run)
     # This is a callback that should help us with stopping validation when it's time but isn't working.
     save_best_val_checkpoint_callback = ModelCheckpoint(monitor='validation/loss',
@@ -88,12 +87,11 @@ if __name__ == '__main__':
     CONFIG_DIR = os.getcwd() + '/config/'
     sys.path.append(CONFIG_DIR)
 
-    model_selection = input("Select model_type (hrnet or hrt):\n")    
-    if (model_selection == 'hrnet'):
-        config_module = import_module(sys.argv[1])
-    else:
-        config_module = import_module('hrt.config_hrt') # TODO: Import from config file for hrt
-    # Instantiating the config file
+    # CWDE
+    # load config file. Argument one should be the name of the file without the .py extension.
+    config_module = import_module(sys.argv[1])
+    
+     # Instantiating the config file
     config = config_module.Configuration()
     # Setting the checkpoint directory
     CKPT_DIR = os.getcwd() + '/checkpoints/'
