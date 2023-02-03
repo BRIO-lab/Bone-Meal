@@ -40,11 +40,6 @@ class Configuration:
             'IMAGE_THRESHOLD': 0,
             'USE_ALBUMENTATIONS': True
         }
-        # segmentation_net_module needs to be below dataset because it uses dataset['IMG_CHANNELS']
-        self.segmentation_net_module = {
-                'NUM_KEY_POINTS': 1,
-                'NUM_IMG_CHANNELS': self.dataset['IMG_CHANNELS']
-        }
 
         self.datamodule = {
             # *** CHANGE THE IMAGE DIRECTORY TO YOUR OWN ***
@@ -66,10 +61,18 @@ class Configuration:
             'learning_rate': 1e-3
         }
         
+        # network params
         self.net = {
             'BACKBONE': 'hrt', # the name of the backbone used in backbone_selector. Currently have planned support for hrt and hrnet
-            'MODULE' : 'PHONY', # TODO: research how module works in HRFormer
+            'MODULE' : 'PHONY BELOGNA', # TODO: research how module works in HRFormer
             'LOSS' :  'fs_ce_loss' # See lib/models/loss/loss_manager.py
+        }
+        
+        # these are essentially params for the hrnet backbone's SegmentationNetModule class
+        # segmentation_net_module needs to be below dataset because it uses dataset['IMG_CHANNELS']
+        self.segmentation_net_module = {
+                'NUM_KEY_POINTS': 1,
+                'NUM_IMG_CHANNELS': self.dataset['IMG_CHANNELS']
         }
         
         # Params for FSCELoss

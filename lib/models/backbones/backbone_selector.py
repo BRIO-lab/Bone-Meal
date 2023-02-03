@@ -16,6 +16,7 @@ from __future__ import print_function
 #from lib.models.backbones.resnet.resnet_backbone import ResNetBackbone
 #from lib.models.backbones.hrnet.hrnet_backbone import HRNetBackbone
 from lib.models.backbones.hrt.hrt_backbone import HRTBackbone
+#TODO: remove if we choose not to have an hrnet directory
 from hrnet.pose_hrnet_module import SegmentationNetModule, PoseHighResolutionNet
 #from lib.models.backbones.swin.swin_backbone import SwinTransformerBackbone
 from lib.utils.tools.logger import Logger as Log
@@ -34,6 +35,7 @@ class BackboneSelector(object):
             model = HRTBackbone(self.configer)(**params)
 
         elif "hrnet" in backbone:
+            # TODO: pass arguments given to segmentation net into in build.py here
             model = None
 
         else:
