@@ -23,6 +23,7 @@ class SegmentationNetModule(pl.LightningModule):
         print("Pose HRNet is on device " + str(next(self.pose_hrnet.parameters()).get_device()))     # testing line
         print("Is Pose HRNet on GPU? " + str(next(self.pose_hrnet.parameters()).is_cuda))            # testing line
         self.wandb_run = wandb_run
+        # CWDE: TODO: remove hard coding and replace with a parameter or query to config.net['LOSS'] processed by loss_selector or loss_manager
         self.loss_fn = torch.nn.BCEWithLogitsLoss()
         #print(self.pose_hrnet.get_device())
 
