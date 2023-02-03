@@ -78,6 +78,8 @@ class Configuration:
             'ce_reduction' : -1,
             'ce_ignore_index': -1
         }
+        
+        #TODO: add other params dicts for each loss function we have. Code will be extensible 
 
         self.transform = \
         A.Compose([
