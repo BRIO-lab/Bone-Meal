@@ -67,8 +67,8 @@ class Configuration:
         }
         
         self.net = {
-            'BACKBONE': 'place_holder', # the name of the backbone used in back_bone selector. 
-            'MODULES' : 'fake',  # list of modules to place on top of the backbone. skeleton of support pending.
+            'BACKBONE': 'hrt', # the name of the backbone used in backbone_selector. Currently have planned support for hrt and hrnet
+            'MODULE' : 'PHONY', # TODO: research how module works in HRFormer
             'LOSS' :  'fs_ce_loss' # See lib/models/loss/loss_manager.py
         }
         
