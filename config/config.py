@@ -65,7 +65,7 @@ class Configuration:
         # network params
         self.net = {
             'BACKBONE': 'hrnet', # the name of the backbone used in backbone_selector. Currently have planned support for hrt and hrnet
-            'MODULE' : 'PHONY BELOGNA', # TODO: research how module works in HRFormer
+            'MODULES' : {}, # TODO: research how module works in HRFormer
             'LOSS' :  'fs_ce_loss' # See lib/models/loss/loss_manager.py
         }
         
