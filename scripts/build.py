@@ -13,7 +13,7 @@
 
 # CWDE: import removed to replace it with the versions of these files in lib/models/backbones/hrnet
 # from pose_hrnet_module import SegmentationNetModule, PoseHighResolutionNet
-import lib.models.backbones.backbone_selector
+from lib.models.backbones.backbone_selector import BackboneSelector
 
 #from models.seg_hrt import SegmentationHrtModule <- not implmeneted TODO:
 import wandb
@@ -23,7 +23,7 @@ import wandb
 def build_model(config, wandb_run):
     model_type_sel= config.net['BACKBONE']
     backbone_selector = BackboneSelector(configer = config)
-    model = backbone_selector.get_backbone()
+    model = backbone_selector.get_backbone(wandb_run = wandb_run)
     
     #elif model_type_sel == "hrt":
     #    mode = SegmentationHrtModule(

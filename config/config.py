@@ -61,21 +61,27 @@ class Configuration:
             'learning_rate': 1e-3
         }
         
+        
         # network params
         self.net = {
-            'BACKBONE': 'hrt', # the name of the backbone used in backbone_selector. Currently have planned support for hrt and hrnet
+            'BACKBONE': 'hrnet', # the name of the backbone used in backbone_selector. Currently have planned support for hrt and hrnet
             'MODULE' : 'PHONY BELOGNA', # TODO: research how module works in HRFormer
             'LOSS' :  'fs_ce_loss' # See lib/models/loss/loss_manager.py
         }
         
+        # PARAMS FOR BACKBONES (Format: self.[name of backbone in self.net] = { params dict })
+        
         # these are essentially params for the hrnet backbone's SegmentationNetModule class
         # segmentation_net_module needs to be below dataset because it uses dataset['IMG_CHANNELS']
+        # they are an exception to the format established in the comment above.
         self.segmentation_net_module = {
                 'NUM_KEY_POINTS': 1,
                 'NUM_IMG_CHANNELS': self.dataset['IMG_CHANNELS']
         }
         
-        # Params for FSCELoss
+        # PARAMS FOR LOSS FUNCTIONS (Format: self.[name of loss in self.net] = { params dict })
+        
+        # Params for FSCELoss: TODO: insert actual params
         self.fs_ce_loss = {
             'ce_weight' : -1,
             'ce_reduction' : -1,
