@@ -17,8 +17,8 @@ import torch
 import torch.nn as nn
 import numpy as np
 import torch.nn.functional as F
-from lib.utils.tools.logger import Logger as Log
-from config import config
+#from lib.utils.tools.logger import Logger as Log
+#from config import config
 
 class CrossEntropy(nn.Module):
     def __init__(self, ignore_label=-1, weight=None):
