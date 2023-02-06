@@ -15,9 +15,11 @@ from __future__ import print_function
 
 #from lib.models.backbones.resnet.resnet_backbone import ResNetBackbone
 #from lib.models.backbones.hrnet.hrnet_backbone import HRNetBackbone
-from lib.models.backbones.hrt.hrt_backbone import HRTBackbone
-#TODO: remove if we choose not to have an hrnet directory
-from hrnet.pose_hrnet_module import SegmentationNetModule, PoseHighResolutionNet
+
+#TODO: add back in once hrnet is working
+#from lib.models.backbones.hrt.hrt_backbone import HRTBackbone
+
+from lib.models.backbones.hrnet.pose_hrnet_module import SegmentationNetModule, PoseHighResolutionNet
 #from lib.models.backbones.swin.swin_backbone import SwinTransformerBackbone
 from lib.utils.tools.logger import Logger as Log
 
@@ -27,7 +29,7 @@ class BackboneSelector(object):
         # CWDE: Unlike the HRTransformer repository, configer here is a Config object not a Configer object. 
         self.configer = configer
 
-    def get_backbone(self, **params):
+    def get_backbone(self, wandb_run = None, **params):
         
         # CWDE
         # backbone now receives the option in config.net['BACKBONE'] through a Config object.
@@ -44,7 +46,7 @@ class BackboneSelector(object):
 
         elif backbone == 'hrnet':
             model = model = SegmentationNetModule(
-            config=config, wandb_run=wandb_run
+            config=self.configer, wandb_run=wandb_run
             )
 
         else:

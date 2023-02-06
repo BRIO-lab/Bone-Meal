@@ -65,24 +65,36 @@ class Configuration:
         # network params
         self.net = {
             'BACKBONE': 'hrnet', # the name of the backbone used in backbone_selector. Currently have planned support for hrt and hrnet
-            'MODULES' : {}, # TODO: research how module works in HRFormer
-            'LOSS' :  'fs_ce_loss' # See lib/models/loss/loss_manager.py
+            'ACHITECTURE' : 'NotARealClassName' # TODO: define an actual architecture class and put its name here.
         }
         
         # PARAMS FOR BACKBONES (Format: self.[name of backbone in self.net] = { params dict })
         
         # these are essentially params for the hrnet backbone's SegmentationNetModule class
-        # segmentation_net_module needs to be below dataset because it uses dataset['IMG_CHANNELS']
         # they are an exception to the format established in the comment above.
+        # segmentation_net_module needs to be below dataset because it uses dataset['IMG_CHANNELS']
         self.segmentation_net_module = {
                 'NUM_KEY_POINTS': 1,
-                'NUM_IMG_CHANNELS': self.dataset['IMG_CHANNELS']
+                'NUM_IMG_CHANNELS': self.dataset['IMG_CHANNELS'],
+                'LOSS' : 'torch_nn_bce_with_logits_loss'
         }
         
-        # PARAMS FOR LOSS FUNCTIONS (Format: self.[name of loss in self.net] = { params dict })
+        # PARAMS FOR LOSS FUNCTIONS (Format: self.[name of loss in self.backbone] = { params dict })
+        
+        # Params dict for BCEWithLogitsLoss, which takes no params in the origin model from Lightning Segmentation.
+        self.torch_nn_bce_with_logits_loss = {
+            # NO PARAMS
+        }
+        
+        self.ohem_ce_loss = {
+            'IGNORE_LABEL' : -1,
+            'THRES' : 0.7,
+            'MIN_KEPT' : 100000,
+            'WEIGHT' : None
+        }
         
         # Params for FSCELoss: TODO: insert actual params
-        self.fs_ce_loss = {
+        self.fsce_loss = {
             'ce_weight' : -1,
             'ce_reduction' : -1,
             'ce_ignore_index': -1
