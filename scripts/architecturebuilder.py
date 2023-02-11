@@ -20,7 +20,7 @@ class ArchitectureBuilder(nn.Module):
 
         return model
 
-
+##No forward function as those would be defined in the modules.
     def compile_model(self,model):
         Loss_selector=loss_selector(self.config[''])
         loss_fn = Loss_selector.get_loss()
