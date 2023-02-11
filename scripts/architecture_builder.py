@@ -5,10 +5,10 @@ from lib.models.backbones import backbone_selector
 from lib.models.loss import loss_selector
 
 class ArchitectureBuilder(nn.Module):
-    def __init__(self, config_file):
+    def __init__(self, config):
         self.config=config
     def build_model(self):
-        Backbone_selector= backbone_selector(self.config[''])
+        Backbone_selector= backbone_selector(self.config.net['BACKBONE'])
         backbone = Backbone_selector.get_backbone()
         model = nn.sequential(backbone)
         #Following code is for if we have a module selector with multiple modules
