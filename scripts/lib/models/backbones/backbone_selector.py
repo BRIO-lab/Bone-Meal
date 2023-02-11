@@ -25,16 +25,16 @@ from lib.utils.tools.logger import Logger as Log
 
 # TODO: convert into a function that takes a Config object rather than a class.
 class BackboneSelector(object):
-    def __init__(self, configer):
+    def __init__(self, config):
         # CWDE: Unlike the HRTransformer repository, configer here is a Config object not a Configer object. 
-        self.configer = configer
+        self.config = config
 
     def get_backbone(self, wandb_run = None, **params):
         
         # CWDE
         # backbone now receives the option in config.net['BACKBONE'] through a Config object.
         #backbone = self.configer.get("network", "backbone")
-        backbone = self.configer.net['BACKBONE']
+        backbone = self.config.net['BACKBONE']
 
         model = None
 
