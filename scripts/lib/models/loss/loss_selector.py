@@ -1,4 +1,4 @@
-from loss import RMILoss, SegFixLoss, FSAuxRMILoss,FSAuxCELoss, FSAuxOhemCELoss, FSOhemCELoss, FSCELoss, WeightedFSOhemCELoss, OhemCrossEntropy
+from lib.models.loss.loss import RMILoss, SegFixLoss, FSAuxRMILoss,FSAuxCELoss, FSAuxOhemCELoss, FSOhemCELoss, FSCELoss, WeightedFSOhemCELoss, OhemCrossEntropy
 import sys
 import os
 import torch.nn
