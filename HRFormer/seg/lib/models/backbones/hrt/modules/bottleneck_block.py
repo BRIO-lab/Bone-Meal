@@ -3,7 +3,8 @@ import pdb
 import logging
 import torch.nn as nn
 import torch.nn.functional as F
-from torchvision.models.utils import load_state_dict_from_url
+#from torchvision.models.utils import load_state_dict_from_url
+from torch.hub import load_state_dict_from_url
 from timm.models.registry import register_model
 from functools import partial
 

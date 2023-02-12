@@ -41,6 +41,9 @@ class SegTask:
     def eval(outputs, meta, running_scores):
         ori_target = meta['ori_target']
         labelmap = np.argmax(outputs['seg'], axis=-1)
+        #labelmap = outputs['seg'].astype(int)
+        #print("ori_target:", type(ori_target[0][0]))
+        #print("labelmap:", type(labelmap[0][0]))
         running_scores['seg'].update(labelmap[None], ori_target[None])
 
 

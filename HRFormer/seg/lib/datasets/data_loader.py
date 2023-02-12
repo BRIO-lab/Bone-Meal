@@ -46,7 +46,7 @@ class DataLoader(object):
 
         self.label_transform = trans.Compose([
             trans.ToLabel(),
-            trans.ReLabel(255, -1), ])
+           ])
 
     def get_dataloader_sampler(self, klass, split, dataset):
 

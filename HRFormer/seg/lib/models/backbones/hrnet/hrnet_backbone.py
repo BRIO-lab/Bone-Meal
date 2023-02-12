@@ -894,7 +894,7 @@ class HRNetBackbone(object):
 
         if arch == "hrnet18":
             arch_net = HighResolutionNet(
-                MODEL_CONFIGS["hrnet18"], bn_type="torchsyncbn", bn_momentum=0.1
+                MODEL_CONFIGS["hrnet18"], bn_type="torchbn", bn_momentum=0.1
             )
             arch_net = ModuleHelper.load_model(
                 arch_net,
@@ -905,7 +905,7 @@ class HRNetBackbone(object):
 
         elif arch == "hrnet32":
             arch_net = HighResolutionNet(
-                MODEL_CONFIGS["hrnet32"], bn_type="torchsyncbn", bn_momentum=0.1
+                MODEL_CONFIGS["hrnet32"], bn_type="torchbn", bn_momentum=0.1
             )
             arch_net = ModuleHelper.load_model(
                 arch_net,
@@ -916,7 +916,7 @@ class HRNetBackbone(object):
 
         elif arch == "hrnet48":
             arch_net = HighResolutionNet(
-                MODEL_CONFIGS["hrnet48"], bn_type="torchsyncbn", bn_momentum=0.1
+                MODEL_CONFIGS["hrnet48"], bn_type="torchbn", bn_momentum=0.1
             )
             arch_net = ModuleHelper.load_model(
                 arch_net,
@@ -927,7 +927,7 @@ class HRNetBackbone(object):
 
         elif arch == "hrnet64":
             arch_net = HighResolutionNet(
-                MODEL_CONFIGS["hrnet64"], bn_type="torchsyncbn", bn_momentum=0.1
+                MODEL_CONFIGS["hrnet64"], bn_type="torchbn", bn_momentum=0.1
             )
             arch_net = ModuleHelper.load_model(
                 arch_net,

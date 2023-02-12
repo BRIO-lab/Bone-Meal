@@ -179,7 +179,10 @@ class Trainer(object):
                     ],
                 )
 
+            ### HERE
             (inputs, targets), batch_size = self.data_helper.prepare_data(data_dict)
+            #print(*inputs)
+            #print(targets[0].shape)
             self.data_time.update(time.time() - start_time)
 
             foward_start_time = time.time()
@@ -187,31 +190,42 @@ class Trainer(object):
                 outputs = self.seg_net(*inputs)
             self.foward_time.update(time.time() - foward_start_time)
 
+            #print(outputs[0].shape)
+            #print(len(outputs))
+
             loss_start_time = time.time()
-            if is_distributed():
-                import torch.distributed as dist
 
-                def reduce_tensor(inp):
-                    """
-                    Reduce the loss from all processes so that
-                    process with rank 0 has the averaged results.
-                    """
-                    world_size = get_world_size()
-                    if world_size < 2:
-                        return inp
-                    with torch.no_grad():
-                        reduced_inp = inp
-                        dist.reduce(reduced_inp, dst=0)
-                    return reduced_inp
+            #if is_distributed():
+            import torch.distributed as dist
+            def reduce_tensor(inp):
+                """
+                Reduce the loss from all processes so that
+                process with rank 0 has the averaged results.
+                """
+                world_size = get_world_size()
+                if world_size < 2:
+                    return inp
+                with torch.no_grad():
+                    reduced_inp = inp
+                    dist.reduce(reduced_inp, dst=0)
+                return reduced_inp
 
-                with torch.cuda.amp.autocast():
-                    loss = self.pixel_loss(outputs, targets)
-                    backward_loss = loss
-                    display_loss = reduce_tensor(backward_loss) / get_world_size()
-            else:
-                backward_loss = display_loss = self.pixel_loss(
-                    outputs, targets, gathered=self.configer.get("network", "gathered")
-                )
+            with torch.cuda.amp.autocast():
+                #print(targets[0].shape)
+                #print(len(targets))
+                out = torch.stack((outputs[0], outputs[1]), dim=1)
+                targ = torch.stack((targets[0], targets[1]), dim=0)
+                #print(out.shape)
+                #print(targ.shape)
+                cel = nn.CrossEntropyLoss()
+                loss = cel(out, targ)
+                #loss = self.pixel_loss(out, targets.long())
+                backward_loss = loss
+                display_loss = reduce_tensor(backward_loss) / get_world_size()
+
+            #backward_loss = display_loss = self.pixel_loss(
+            #    outputs, targets, gathered=self.configer.get("network", "gathered")
+            #)
 
             self.train_losses.update(display_loss.item(), batch_size)
             self.loss_time.update(time.time() - loss_start_time)
@@ -376,17 +390,26 @@ class Trainer(object):
                     outputs = self.seg_net(*inputs)
 
                     try:
-                        loss = self.pixel_loss(
-                            outputs,
-                            targets,
-                            gathered=self.configer.get("network", "gathered"),
-                        )
+                        ########### HERE
+                        #print(outputs.shape)
+                        out = torch.stack((outputs[0], outputs[1]), dim=1)
+                        targ = torch.stack((targets[0], targets[1]), dim=0)
+                        #print(out.shape)
+                        #print(targ.shape)
+                        cel = nn.CrossEntropyLoss()
+                        loss = cel(out, targ)
+                        #loss = self.pixel_loss(
+                        #    outputs,
+                        #    targets,
+                        #    gathered=self.configer.get("network", "gathered"),
+                        #)
                     except AssertionError as e:
                         print(len(outputs), len(targets))
 
-                    if not is_distributed():
-                        outputs = self.module_runner.gather(outputs)
+                    #if not is_distributed():
+                        #outputs = self.module_runner.gather(outputs)
                     self.val_losses.update(loss.item(), batch_size)
+                    #print(outputs.shape)
                     self.evaluator.update_score(outputs, data_dict["meta"])
 
             self.batch_time.update(time.time() - start_time)

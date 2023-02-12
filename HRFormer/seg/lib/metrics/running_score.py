@@ -156,6 +156,9 @@ class RunningScore(object):
     def update(self, label_preds, label_trues):
         self.reduced_confusion_matrix = None
         for lt, lp in zip(label_trues, label_preds):
+            #print(lt.flatten().shape)
+            #print(lp.flatten().shape)
+            #print(self.n_classes)
             self.confusion_matrix += self._fast_hist(lt.flatten(), lp.flatten(), self.n_classes)
 
     def reduce_scores(self):

@@ -25,7 +25,7 @@ from lib.utils.tools.logger import Logger as Log
 
 class ModuleHelper(object):
     @staticmethod
-    def BNReLU(num_features, bn_type=None, **kwargs):
+    def BNReLU(num_features, bn_type="torchbn", **kwargs):
         if bn_type == "torchbn":
             return nn.Sequential(nn.BatchNorm2d(num_features, **kwargs), nn.ReLU())
         elif bn_type == "torchsyncbn":

@@ -516,7 +516,7 @@ class RandomCrop(_BaseTransform):
 
         if isinstance(crop_size, float):
             self.size = (crop_size, crop_size)
-        elif isinstance(crop_size, collections.Iterable) and len(crop_size) == 2:
+        elif isinstance(crop_size, collections.abc.Iterable) and len(crop_size) == 2:
             self.size = crop_size
         else:
             raise TypeError('Got inappropriate size arg: {}'.format(crop_size))

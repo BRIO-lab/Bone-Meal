@@ -92,9 +92,14 @@ class FSCELoss(nn.Module):
                     loss += weights[i] * self.ce_loss(inputs[i], target)
 
         else:
+            #print(len(inputs))
+            #print(len(targets))
+            inp = torch.stack((inputs[0], inputs[1]), dim=1)
+            #print(inputs[0].shape)
+            #print(inp.shape)
             target = self._scale_target(targets[0], (inputs.size(2), inputs.size(3)))
             loss = self.ce_loss(inputs, target)
-
+            #loss = self.ce_loss(inputs, target.to(torch.float))
         return loss
 
     @staticmethod

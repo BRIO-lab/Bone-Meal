@@ -129,7 +129,6 @@ class DataHelper:
         inputs = [data_dict[k] for k in input_keys]
         batch_size = len(inputs[0])
         targets = [data_dict[k] for k in target_keys]
-
         sequences = [
             self._prepare_sequence(inputs, force_list=True),
             self._prepare_sequence(targets, force_list=False)

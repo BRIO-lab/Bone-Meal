@@ -73,16 +73,18 @@ class StandardEvaluator(_BaseEvaluator):
             self.save_net_metric = metric
 
     def update_score(self, outputs, metas):
+        #print("metas: ", len(metas), " outputs: ", outputs.shape)
         if isinstance(outputs, torch.Tensor):
             outputs = [outputs]
             
         for i in range(len(outputs[0])):
-
-            ori_img_size = metas[i]['ori_img_size']
-            border_size = metas[i]['border_size']
+            ori_img_size = metas[0]['ori_img_size']
+            border_size = metas[0]['border_size']
 
             outputs_numpy = {}
             for name, idx in self.output_indices.items():
+                #print(outputs[idx].shape)
+                #item = outputs[idx]
                 item = outputs[idx].permute(0, 2, 3, 1)
                 if self.configer.get('dataset') == 'celeba':
                     # the celeba image is of size 1024x1024
@@ -95,6 +97,7 @@ class StandardEvaluator(_BaseEvaluator):
                         item[i, :border_size[1], :border_size[0]].cpu().numpy(),
                         tuple(ori_img_size), interpolation=cv2.INTER_CUBIC
                     )
+                #print(item.shape)
                 outputs_numpy[name] = item
 
             for name in outputs_numpy:

@@ -374,4 +374,4 @@ dependencies:
     - widgetsnbextension==4.0.3
     - yarl==1.8.1
     - zipp==3.8.1
-prefix: /home/sasank/miniconda3/envs/jtml
+prefix: /home/zach/anaconda3/envs/jtml

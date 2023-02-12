@@ -9,6 +9,7 @@ wandb/*
 *.sqlite
 
 # HRFormer resources
+HRFormer/seg/checkpoints
 HRFormer/seg/data
 HRFormer/seg/pretrained_model
 HRFormer/seg/configs/*
