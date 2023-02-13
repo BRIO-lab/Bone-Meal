@@ -21,14 +21,14 @@ CONFIGS="configs/jtml/H_48_D_4.json"
 CONFIGS_TEST="configs/jtml/H_48_D_4.json"
 
 MODEL_NAME="hrnet_w48"
-LOSS_TYPE="fs_auxce_loss"
+LOSS_TYPE="fs_ce_loss"
 CHECKPOINTS_NAME="${MODEL_NAME}_${BACKBONE}_$(date +%F_%H-%M-%S)"
 LOG_FILE="./log/dogs/${CHECKPOINTS_NAME}.log"
 echo "Logging to $LOG_FILE"
 mkdir -p `dirname $LOG_FILE`
 
 PRETRAINED_MODEL="./pretrained_model/hrnetv2_w48_imagenet_pretrained.pth"
-MAX_ITERS=100
+MAX_ITERS=50
 
 
 if [ "$1"x == "train"x ]; then

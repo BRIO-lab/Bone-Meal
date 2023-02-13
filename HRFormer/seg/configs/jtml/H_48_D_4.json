@@ -63,9 +63,9 @@
     },
     "normalize": {
       "div_value": 255.0,
-      "mean_value": [0.485, 0.456, 0.406],
-      "mean": [0.485, 0.456, 0.406],
-      "std": [0.229, 0.224, 0.225]
+      "mean_value": [0.456, 0.456, 0.456],
+      "mean": [0.456, 0.456, 0.456],
+      "std": [0.224, 0.224, 0.224]
     },
     "checkpoints": {
       "checkpoints_name": "fs_aspocnet_dogs_seg",
@@ -128,12 +128,10 @@
       }
     },
     "loss": {
-      "loss_type": "fs_auxce_loss",
+      "loss_type": "fs_ce_loss",
       "params": {
         "ce_reduction": "elementwise_mean",
-        "ce_ignore_index": -1,
-        "ohem_minkeep":100000,
-        "ohem_thresh": 0.7
+        "ce_ignore_index": -1
       }
     }
 }

@@ -75,7 +75,7 @@ class FSCELoss(nn.Module):
         if self.configer.exists('loss', 'params') and 'ce_ignore_index' in self.configer.get('loss', 'params'):
             ignore_index = self.configer.get('loss', 'params')['ce_ignore_index']
 
-        self.ce_loss = nn.CrossEntropyLoss(weight=weight, ignore_index=ignore_index, reduction=reduction)
+        self.ce_loss = nn.CrossEntropyLoss(weight=None, ignore_index=ignore_index, reduction=reduction)
 
     def forward(self, inputs, *targets, weights=None, **kwargs):
         loss = 0.0
@@ -92,14 +92,12 @@ class FSCELoss(nn.Module):
                     loss += weights[i] * self.ce_loss(inputs[i], target)
 
         else:
-            #print(len(inputs))
-            #print(len(targets))
-            inp = torch.stack((inputs[0], inputs[1]), dim=1)
-            #print(inputs[0].shape)
-            #print(inp.shape)
             target = self._scale_target(targets[0], (inputs.size(2), inputs.size(3)))
+            #print(target[0])
+            #print(inputs[0])
+            #print(inputs.shape)
+            #print(target.shape)
             loss = self.ce_loss(inputs, target)
-            #loss = self.ce_loss(inputs, target.to(torch.float))
         return loss
 
     @staticmethod
