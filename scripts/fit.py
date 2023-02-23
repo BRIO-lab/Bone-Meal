@@ -22,7 +22,7 @@ from build import build_model
 # want to refactor more
 
 # CWDE: 2-23-2023
-from lib.models.data_modules.datamodule_selector import DataModuleSelector
+from lib.models.datamodules.datamodule_selector import DataModuleSelector
 
 """
 The main function contains the neural network-related code.
@@ -32,8 +32,8 @@ def main(config, wandb_run):
     # The DataModule object loads the data from CSVs, calls the JTMLDataset to get data, and creates the dataloaders.
     #CWDE: 2-23-23 Changed to use DataModuleSelector
     data_selector = DataModuleSelector(config = config)
-    data_module = data_selector.get_data_module()
-
+    data_module = data_selector.get_datamodule()
+    
     # This is the real architecture we're using. It is vanilla PyTorch - no Lightning.
     #pose_hrnet = PoseHighResolutionNet(num_key_points=1, num_image_channels=config.module['NUM_IMAGE_CHANNELS'])
     

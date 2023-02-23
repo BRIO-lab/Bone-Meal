@@ -22,7 +22,7 @@ import wandb
 # Modified Engut, removing checks to leave only hrnet and hrt, added wandb_run param
 def build_model(config, wandb_run):
     model_type_sel= config.net['BACKBONE']
-    backbone_selector = BackboneSelector(configer = config)
+    backbone_selector = BackboneSelector(config = config)
     model = backbone_selector.get_backbone(wandb_run = wandb_run)
     
     #elif model_type_sel == "hrt":

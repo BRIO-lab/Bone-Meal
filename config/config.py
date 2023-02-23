@@ -76,7 +76,7 @@ class Configuration:
         self.segmentation_net_module = {
                 'NUM_KEY_POINTS': 1,
                 'NUM_IMG_CHANNELS': self.dataset['IMG_CHANNELS'],
-                'LOSS' : 'ohem_ce_loss'
+                'LOSS' : 'torch_nn_bce_with_logits_loss'
         }
         
         # PARAMS FOR LOSS FUNCTIONS (Format: self.[name of loss in self.backbone] = { params dict })

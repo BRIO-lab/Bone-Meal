@@ -42,11 +42,11 @@ class BackboneSelector(object):
             # CWDE
             # TODO: alter HRTBackbone and its constructor to accept a Config object with args for construction.
             # Will probably have to wait on the Transformer-Segmentation team to deliver
-            model = HRTBackbone(self.configer)(**params)
+            model = HRTBackbone(self.config)(**params)
 
         elif backbone == 'hrnet':
             model = model = SegmentationNetModule(
-            config=self.configer, wandb_run=wandb_run
+            config=self.config, wandb_run=wandb_run
             )
 
         else:
