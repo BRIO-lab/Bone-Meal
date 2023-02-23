@@ -64,15 +64,15 @@ class Configuration:
         
         # network params
         self.net = {
-            'BACKBONE': 'hrnet', # the name of the backbone used in backbone_selector. Currently have planned support for hrt and hrnet
-            'ACHITECTURE' : 'NotARealClassName' # TODO: define an actual architecture class and put its name here.
+            'BACKBONE': 'hrnet', # the name of the backbone identified in backbone_selector. Currently have planned support for hrt and hrnet
+            'ACHITECTURE' : 'architecture_builder', # name of the architecture_builder class file
+            'DATA_MODULE' : 'segmentation_data_module'
         }
         
         # PARAMS FOR BACKBONES (Format: self.[name of backbone in self.net] = { params dict })
         
         # these are essentially params for the hrnet backbone's SegmentationNetModule class
         # they are an exception to the format established in the comment above.
-        # segmentation_net_module needs to be below dataset because it uses dataset['IMG_CHANNELS']
         self.segmentation_net_module = {
                 'NUM_KEY_POINTS': 1,
                 'NUM_IMG_CHANNELS': self.dataset['IMG_CHANNELS'],

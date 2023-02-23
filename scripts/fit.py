@@ -11,7 +11,6 @@ import torch
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
-from datamodule import SegmentationDataModule
 from callbacks import JTMLCallback
 from utility import create_config_dict
 #import click
@@ -22,6 +21,8 @@ import wandb
 from build import build_model 
 # want to refactor more
 
+# CWDE: 2-23-2023
+from lib.models.data_modules.datamodule_selector import DataModuleSelector
 
 """
 The main function contains the neural network-related code.
@@ -29,7 +30,9 @@ The main function contains the neural network-related code.
 def main(config, wandb_run):
 
     # The DataModule object loads the data from CSVs, calls the JTMLDataset to get data, and creates the dataloaders.
-    data_module = SegmentationDataModule(config=config)
+    #CWDE: 2-23-23 Changed to use DataModuleSelector
+    data_selector = DataModuleSelector(config = config)
+    data_module = data_selector.get_data_module()
 
     # This is the real architecture we're using. It is vanilla PyTorch - no Lightning.
     #pose_hrnet = PoseHighResolutionNet(num_key_points=1, num_image_channels=config.module['NUM_IMAGE_CHANNELS'])

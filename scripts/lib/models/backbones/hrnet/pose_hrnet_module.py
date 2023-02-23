@@ -5,7 +5,7 @@ import numpy as np
 import pytorch_lightning as pl
 import wandb
 
-from pose_hrnet_modded_in_notebook import PoseHighResolutionNet
+from lib.models.backbones.hrnet.pose_hrnet_modded_in_notebook import PoseHighResolutionNet
 # CWDE: add import for loss selector. See alteration to the class constructor
 from lib.models.loss.loss_selector import LossSelector
 
