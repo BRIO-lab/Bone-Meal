@@ -7,6 +7,7 @@ import os
 
 class Configuration:
     def __init__(self):
+        # CWDE: self.init MUST BE LISTED FIRST
         self.init = {
             'PROJECT_NAME': 'Segmentation Trial',
             'MODEL_NAME': 'MyModel',
@@ -47,7 +48,8 @@ class Configuration:
             'IMAGE_DIRECTORY': 'C:/Users/cwell/Documents/jtml_data/TPLO_Ten_Dogs_grids',
             # *** CHANGE THE CHECKPOINT PATH TO YOUR OWN FOR TESTING ***
             #'CKPT_FILE': 'path/to/ckpt/file.ckpt',  # used when loading model from a checkpoint
-            'CKPT_FILE': 'C:/Users/cwell/Documents/jtml_data/Checkpoints/TestModel.ckpt',  # used when loading model from a checkpoint, such as in testing
+            # used when loading model from a checkpoint, such as in testing
+            'CKPT_FILE': 'C:/Users/cwell/Documents/Bone-Meal/checkpoints/' + self.init['WANDB_RUN_GROUP'] + self.init['MODEL_NAME'] + '.ckpt', 
             'BATCH_SIZE': 1,
             'SHUFFLE': True,        # Only for training, for test and val this is set in the datamodule script to False
             'NUM_WORKERS': os.cpu_count(),   # This number seems fine for local but on HPG, we have so many cores that a number like 4 seems better.

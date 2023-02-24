@@ -26,7 +26,7 @@ class SegmentationNetModule(pl.LightningModule):
         print("Is Pose HRNet on GPU? " + str(next(self.pose_hrnet.parameters()).is_cuda))            # testing line
         self.wandb_run = wandb_run
         
-        # CWDE: Altered from Sasank Desaraju's file.
+        # CWDE:
         loss_selector = LossSelector(config = self.config, module_dict = self.config.segmentation_net_module)
         self.loss_fn = loss_selector.get_loss()
         #print(self.pose_hrnet.get_device())
