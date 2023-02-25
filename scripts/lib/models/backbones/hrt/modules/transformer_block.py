@@ -6,8 +6,8 @@ import torch
 import torch.nn as nn
 from functools import partial
 
-from .multihead_isa_pool_attention import InterlacedPoolAttention
-from .ffn_block import MlpDWBN
+from lib.models.backbones.hrt.modules.multihead_isa_pool_attention import InterlacedPoolAttention
+from lib.models.backbones.hrt.modules.ffn_block import MlpDWBN
 
 
 BN_MOMENTUM = 0.1

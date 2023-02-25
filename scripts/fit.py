@@ -21,8 +21,9 @@ import wandb
 from build import build_model 
 # want to refactor more
 
-# CWDE: 2-23-2023
+# CWDE: 2-23 & 24-2023
 from lib.models.datamodules.datamodule_selector import DataModuleSelector
+from lib.models.nets.architecture_selector import ArchitectureSelector
 
 """
 The main function contains the neural network-related code.
@@ -34,18 +35,11 @@ def main(config, wandb_run):
     data_selector = DataModuleSelector(config = config)
     data_module = data_selector.get_datamodule()
     
-    # This is the real architecture we're using. It is vanilla PyTorch - no Lightning.
-    #pose_hrnet = PoseHighResolutionNet(num_key_points=1, num_image_channels=config.module['NUM_IMAGE_CHANNELS'])
     
-    # This is our LightningModule, which where the architecture is supposed to go.
-    # Since we are using an architecure written in PyTorch (PoseHRNet), we feed that architecture in.
-    # We also pass our wandb_run object so we can log.
-    #model = SegmentationNetModule(config=config, wandb_run=wandb_run) # I can put some data module stuff in this argument if I want
     """
-    Call to Build is made here
-    modified by Engut (the one presently writing this)
+    Call to Build is made inside of Architecture Selector
     """
-    model = build_model(config=config, wandb_run=wandb_run)
+    model = ArchitectureSelector(config, wandb_run).get_architecture()
     # This is a callback that should help us with stopping validation when it's time but isn't working.
     save_best_val_checkpoint_callback = ModelCheckpoint(monitor='validation/loss',
                                                         mode='min',

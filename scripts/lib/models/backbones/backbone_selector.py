@@ -32,20 +32,20 @@ class BackboneSelector(object):
     def get_backbone(self, wandb_run = None, **params):
         
         # CWDE
-        # backbone now receives the option in config.net['BACKBONE'] through a Config object.
+        # backbone (renamed to choice) now receives the option in config.net['BACKBONE'] through a Config object.
         #backbone = self.configer.get("network", "backbone")
-        backbone = self.config.net['BACKBONE']
+        choice = self.config.net['BACKBONE']
 
         model = None
 
-        if backbone == 'hrt':
+        if choice == 'hrt':
             # CWDE
             # TODO: alter HRTBackbone and its constructor to accept a Config object with args for construction.
             # Will probably have to wait on the Transformer-Segmentation team to deliver
             model = HRTBackbone(self.config)(**params)
 
-        elif backbone == 'hrnet':
-            model = model = SegmentationNetModule(
+        elif choice == 'hrnet':
+            model = SegmentationNetModule(
             config=self.config, wandb_run=wandb_run
             )
 

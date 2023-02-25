@@ -67,7 +67,7 @@ class Configuration:
         # network params
         self.net = {
             'BACKBONE': 'hrnet', # the name of the backbone identified in backbone_selector. Currently have planned support for hrt and hrnet
-            'ACHITECTURE' : 'architecture_builder', # name of the architecture_builder class file
+            'ARCHITECTURE' :'seg_hrt', # name of the architecture_builder class file
             'DATA_MODULE' : 'segmentation_data_module'
         }
         
@@ -78,6 +78,23 @@ class Configuration:
         self.segmentation_net_module = {
                 'NUM_KEY_POINTS': 1,
                 'NUM_IMG_CHANNELS': self.dataset['IMG_CHANNELS'],
+                'LOSS' : 'torch_nn_bce_with_logits_loss'
+        }
+        
+        # Params for HRT's segmentation_net_module
+        self.hrt_segmentation_net_module = {
+                'NUM_KEY_POINTS': 1,
+                'NUM_IMG_CHANNELS': self.dataset['IMG_CHANNELS'],
+                'NUM_BRANCHES' : 1,
+                'NUM_HEADS' : [2],
+                'BLOCKS' : "BOTTLENECK",
+                'NUM_BLOCKS' : [2], 
+                'NUM_CHANNELS' : [64],
+                'NUM_RESOLUTIONS' : [[56, 56]],
+                'NUM_WINDOW_SIZES' : None,
+                'NUM_MLP_RATIOS' : [4],
+                'MULTI_SCALE_OUTPUT' : True,
+                'DROP_PATH' : 0.0,
                 'LOSS' : 'torch_nn_bce_with_logits_loss'
         }
         
