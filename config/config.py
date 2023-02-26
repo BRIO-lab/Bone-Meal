@@ -45,7 +45,7 @@ class Configuration:
         self.datamodule = {
             # *** CHANGE THE IMAGE DIRECTORY TO YOUR OWN ***
             #'IMAGE_DIRECTORY': '/media/sasank/LinuxStorage/Dropbox (UFL)/Canine Kinematics Data/TPLO_Ten_Dogs_grids',
-            'IMAGE_DIRECTORY': 'C:/Users/cwell/Documents/jtml_data/TPLO_Ten_Dogs_grids',
+            'IMAGE_DIRECTORY': 'C:/Users/echen/Downloads/TPLO_Ten_Dogs_grids',
             # *** CHANGE THE CHECKPOINT PATH TO YOUR OWN FOR TESTING ***
             #'CKPT_FILE': 'path/to/ckpt/file.ckpt',  # used when loading model from a checkpoint
             # used when loading model from a checkpoint, such as in testing
@@ -67,7 +67,7 @@ class Configuration:
         # network params
         self.net = {
             'BACKBONE': 'hrnet', # the name of the backbone identified in backbone_selector. Currently have planned support for hrt and hrnet
-            'ARCHITECTURE' :'seg_hrt', # name of the architecture_builder class file
+            'ARCHITECTURE' :'seg_hrnet', # name of the architecture_builder class file
             'DATA_MODULE' : 'segmentation_data_module'
         }
         
