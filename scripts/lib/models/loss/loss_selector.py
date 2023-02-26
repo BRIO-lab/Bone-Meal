@@ -23,25 +23,3 @@ class LossSelector(object):
                 min_kept = self.config.ohem_ce_loss['MIN_KEPT'], weight = self.config.ohem_ce_loss['WEIGHT'])
             
         return loss
-    
-# CWDE: Unit Test Main. Feel free to delete 
-if __name__ == "__main__":
-    # Config setup taken from scripts/fit.py
-    ## Setting up the config
-    # Parsing the config file
-    CONFIG_DIR = os.getcwd() + '/config/'
-    sys.path.append(CONFIG_DIR)
-
-    # CWDE
-    # load config file. Argument one should be the name of the file without the .py extension.
-    config_module = import_module(sys.argv[1])
-    
-     # Instantiating the config file
-    config = config_module.Configuration()
-    
-    # Test loss selection and construction
-    print('constructing')
-    selector = LossSelector(config, config.segmentation_net_module)
-    print('selecting loss')
-    loss = selector.get_loss()
-    print('completed successfully')
