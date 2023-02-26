@@ -5,7 +5,7 @@ import numpy as np
 import pytorch_lightning as pl
 import wandb
 
-from lib.models.backbones.hrt.hrt_backbone import HighResolutionTransformer  # may want to change import statement
+from lib.models.backbones.hrt.hrt_backbone import HighResolutionTransformerModule  # may want to change import statement
 
 # cobbling together hrt for now TODO: Cleanup
 class SegmentationNetModule(pl.LightningModule):    
@@ -13,10 +13,11 @@ class SegmentationNetModule(pl.LightningModule):
         super().__init__()
         self.save_hyperparameters("learning_rate")
         self.config = config    
-        self.pose_hrt = HighResolutionTransformer(
+        self.pose_hrt = HighResolutionTransformerModule(
                                                 num_inchannels=self.config.hrt_segmentation_net_module['NUM_IMG_CHANNELS'],
                                                 num_branches = self.config.hrt_segmentation_net_module['NUM_BRANCHES'],
                                                 num_blocks = self.config.hrt_segmentation_net_module['NUM_BLOCKS'],
+                                                num_heads = self.config.hrt_segmentation_net_module['NUM_HEADS'],
                                                 blocks = self.config.hrt_segmentation_net_module['BLOCKS'],
                                                 num_channels = self.config.hrt_segmentation_net_module['NUM_CHANNELS'],
                                                 num_window_sizes = self.config.hrt_segmentation_net_module['NUM_WINDOW_SIZES'],

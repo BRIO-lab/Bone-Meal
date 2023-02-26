@@ -84,7 +84,7 @@ class Configuration:
         # Params for HRT's segmentation_net_module
         self.hrt_segmentation_net_module = {
                 'NUM_KEY_POINTS': 1,
-                'NUM_IMG_CHANNELS': self.dataset['IMG_CHANNELS'],
+                'NUM_IMG_CHANNELS': [self.dataset['IMG_CHANNELS']],
                 'NUM_BRANCHES' : 1,
                 'NUM_HEADS' : [2],
                 'BLOCKS' : "BOTTLENECK",
