@@ -15,7 +15,7 @@ class SegmentationNetModule(pl.LightningModule):
         super().__init__()
         self.save_hyperparameters("learning_rate")
         self.config = config    
-        self.pose_hrt = HighResolutionTransformer(cfg = model_configs[self.config.hrt_segmentation_net_base['MODEL_CONFIG']])
+        self.pose_hrt = HighResolutionTransformer(cfg = model_configs[self.config.hrt_segmentation_net['MODEL_CONFIG']])
         print("Pose HRT is on device " + str(next(self.pose_hrt.parameters()).get_device()))     # testing line
         print("Is Pose HRT on GPU? " + str(next(self.pose_hrt.parameters()).is_cuda))            # testing line
         self.pose_hrt.to(device='cuda', dtype=torch.float32)                          # added recently and may fix a lot
@@ -23,7 +23,7 @@ class SegmentationNetModule(pl.LightningModule):
         print("Pose HRT is on device " + str(next(self.pose_hrt.parameters()).get_device()))     # testing line
         print("Is Pose HRT on GPU? " + str(next(self.pose_hrt.parameters()).is_cuda))            # testing line
         self.wandb_run = wandb_run
-        self.loss_fn = LossSelector(config = self.config, module_dict = config.hrt_segmentation_net_base).get_loss()
+        self.loss_fn = LossSelector(config = self.config, module_dict = config.hrt_segmentation_net).get_loss()
 
     def forward(self, x):
         """This performs a forward pass on the dataset

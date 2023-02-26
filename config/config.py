@@ -82,7 +82,7 @@ class Configuration:
         }
         
         # Params for HRT's segmentation_net_module. Defaults used from HRT's Base config
-        self.hrt_segmentation_net_base = {
+        self.hrt_segmentation_net = {
                 'MODEL_CONFIG' : 'hrt_base',
                 'LOSS' : 'torch_nn_bce_with_logits_loss'
         }
