@@ -2,6 +2,7 @@ from lib.models.nets.pose_hrnet_module import SegmentationNetModule as HRNetSegm
 from lib.models.nets.seg_hrt import SegmentationNetModule as HRTSegmentationNetModule
 from build import build_model
 
+
 class ArchitectureSelector():
     def __init__(self, config, wandb):
         self.config = config

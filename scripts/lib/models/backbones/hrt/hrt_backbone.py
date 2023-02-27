@@ -118,7 +118,7 @@ class HighResolutionTransformerModule(nn.Module):
                     stride=stride,
                     bias=False,
                 ),
-                nn.SyncBatchNorm(
+                nn.BatchNorm2d(
                     num_channels[branch_index] * block.expansion, momentum=BN_MOMENTUM
                 ),
             )
@@ -199,7 +199,7 @@ class HighResolutionTransformerModule(nn.Module):
                                 stride=1,
                                 bias=False,
                             ),
-                            nn.SyncBatchNorm(num_inchannels[i], momentum=BN_MOMENTUM),
+                            nn.BatchNorm2d(num_inchannels[i], momentum=BN_MOMENTUM),
                             nn.Upsample(scale_factor=2 ** (j - i), mode="nearest"),
                         )
                     )
@@ -221,7 +221,7 @@ class HighResolutionTransformerModule(nn.Module):
                                         groups=num_inchannels[j],
                                         bias=False,
                                     ),
-                                    nn.SyncBatchNorm(
+                                    nn.BatchNorm2d(
                                         num_inchannels[j], momentum=BN_MOMENTUM
                                     ),
                                     nn.Conv2d(
@@ -231,7 +231,7 @@ class HighResolutionTransformerModule(nn.Module):
                                         stride=1,
                                         bias=False,
                                     ),
-                                    nn.SyncBatchNorm(
+                                    nn.BatchNorm2d(
                                         num_outchannels_conv3x3, momentum=BN_MOMENTUM
                                     ),
                                 )
@@ -249,7 +249,7 @@ class HighResolutionTransformerModule(nn.Module):
                                         groups=num_inchannels[j],
                                         bias=False,
                                     ),
-                                    nn.SyncBatchNorm(
+                                    nn.BatchNorm2d(
                                         num_inchannels[j], momentum=BN_MOMENTUM
                                     ),
                                     nn.Conv2d(
@@ -259,7 +259,7 @@ class HighResolutionTransformerModule(nn.Module):
                                         stride=1,
                                         bias=False,
                                     ),
-                                    nn.SyncBatchNorm(
+                                    nn.BatchNorm2d(
                                         num_outchannels_conv3x3, momentum=BN_MOMENTUM
                                     ),
                                     nn.ReLU(False),
@@ -307,9 +307,9 @@ class HighResolutionTransformer(nn.Module):
         super(HighResolutionTransformer, self).__init__()
 
         self.conv1 = nn.Conv2d(1, 64, kernel_size=3, stride=2, padding=1, bias=False)
-        self.bn1 = nn.SyncBatchNorm(64, momentum=BN_MOMENTUM)
+        self.bn1 = nn.BatchNorm2d(64, momentum=BN_MOMENTUM)
         self.conv2 = nn.Conv2d(64, 64, kernel_size=3, stride=2, padding=1, bias=False)
-        self.bn2 = nn.SyncBatchNorm(64, momentum=BN_MOMENTUM)
+        self.bn2 = nn.BatchNorm2d(64, momentum=BN_MOMENTUM)
         self.relu = nn.ReLU(inplace=True)
 
         # stochastic depth
@@ -402,9 +402,9 @@ class HighResolutionTransformer(nn.Module):
                     padding=1,
                     groups=in_channels,
                 ),
-                nn.SyncBatchNorm(in_channels, momentum=BN_MOMENTUM),
+                nn.BatchNorm2d(in_channels, momentum=BN_MOMENTUM),
                 nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=1),
-                nn.SyncBatchNorm(out_channels, momentum=BN_MOMENTUM),
+                nn.BatchNorm2d(out_channels, momentum=BN_MOMENTUM),
                 nn.ReLU(inplace=True),
             )
             downsamp_modules.append(downsamp_module)
@@ -418,7 +418,7 @@ class HighResolutionTransformer(nn.Module):
                 stride=1,
                 padding=0,
             ),
-            nn.SyncBatchNorm(2048, momentum=BN_MOMENTUM),
+            nn.BatchNorm2d(2048, momentum=BN_MOMENTUM),
             nn.ReLU(inplace=True),
         )
 
@@ -442,7 +442,7 @@ class HighResolutionTransformer(nn.Module):
                                 1,
                                 bias=False,
                             ),
-                            nn.SyncBatchNorm(
+                            nn.BatchNorm2d(
                                 num_channels_cur_layer[i], momentum=BN_MOMENTUM
                             ),
                             nn.ReLU(inplace=True),
@@ -462,7 +462,7 @@ class HighResolutionTransformer(nn.Module):
                     conv3x3s.append(
                         nn.Sequential(
                             nn.Conv2d(inchannels, outchannels, 3, 2, 1, bias=False),
-                            nn.SyncBatchNorm(outchannels, momentum=BN_MOMENTUM),
+                            nn.BatchNorm2d(outchannels, momentum=BN_MOMENTUM),
                             nn.ReLU(inplace=True),
                         )
                     )
@@ -491,7 +491,7 @@ class HighResolutionTransformer(nn.Module):
                     stride=stride,
                     bias=False,
                 ),
-                nn.SyncBatchNorm(planes * block.expansion, momentum=BN_MOMENTUM),
+                nn.BatchNorm2d(planes * block.expansion, momentum=BN_MOMENTUM),
             )
         layers = []
 
