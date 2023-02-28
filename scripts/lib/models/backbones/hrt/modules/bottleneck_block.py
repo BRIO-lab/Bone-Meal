@@ -32,15 +32,15 @@ class Bottleneck(nn.Module):
     ):
         super(Bottleneck, self).__init__()
         self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=1, bias=False)
-        self.bn1 = nn.SyncBatchNorm(planes)
+        self.bn1 = nn.BatchNorm2d(planes)
         self.conv2 = nn.Conv2d(
             planes, planes, kernel_size=3, stride=stride, padding=1, bias=False
         )
-        self.bn2 = nn.SyncBatchNorm(planes)
+        self.bn2 = nn.BatchNorm2d(planes)
         self.conv3 = nn.Conv2d(
             planes, planes * self.expansion, kernel_size=1, bias=False
         )
-        self.bn3 = nn.SyncBatchNorm(planes * self.expansion)
+        self.bn3 = nn.BatchNorm2d(planes * self.expansion)
         self.relu = nn.ReLU(inplace=True)
         self.downsample = downsample
         self.stride = stride
@@ -88,7 +88,7 @@ class BottleneckDWP(nn.Module):
     ):
         super(BottleneckDWP, self).__init__()
         self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=1, bias=False)
-        self.bn1 = nn.SyncBatchNorm(planes, momentum=BN_MOMENTUM)
+        self.bn1 = nn.BatchNorm2d(planes, momentum=BN_MOMENTUM)
         self.conv2 = nn.Conv2d(
             planes,
             planes,
@@ -98,11 +98,11 @@ class BottleneckDWP(nn.Module):
             bias=False,
             groups=planes,
         )
-        self.bn2 = nn.SyncBatchNorm(planes, momentum=BN_MOMENTUM)
+        self.bn2 = nn.BatchNorm2d(planes, momentum=BN_MOMENTUM)
         self.conv3 = nn.Conv2d(
             planes, planes * self.expansion, kernel_size=1, bias=False
         )
-        self.bn3 = nn.SyncBatchNorm(planes * self.expansion, momentum=BN_MOMENTUM)
+        self.bn3 = nn.BatchNorm2d(planes * self.expansion, momentum=BN_MOMENTUM)
         self.relu = nn.ReLU(inplace=True)
         self.downsample = downsample
         self.stride = stride

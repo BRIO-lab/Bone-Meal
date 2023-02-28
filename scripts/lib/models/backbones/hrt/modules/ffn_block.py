@@ -118,7 +118,7 @@ class MlpDWBN(nn.Module):
         hidden_features = hidden_features or in_features
         self.fc1 = nn.Conv2d(in_features, hidden_features, kernel_size=1)
         self.act1 = act_layer()
-        self.norm1 = nn.SyncBatchNorm(hidden_features)
+        self.norm1 = nn.BatchNorm2d(hidden_features)
         self.dw3x3 = nn.Conv2d(
             hidden_features,
             hidden_features,
@@ -128,10 +128,10 @@ class MlpDWBN(nn.Module):
             padding=1,
         )
         self.act2 = dw_act_layer()
-        self.norm2 = nn.SyncBatchNorm(hidden_features)
+        self.norm2 = nn.BatchNorm2d(hidden_features)
         self.fc2 = nn.Conv2d(hidden_features, out_features, kernel_size=1)
         self.act3 = act_layer()
-        self.norm3 = nn.SyncBatchNorm(out_features)
+        self.norm3 = nn.BatchNorm2d(out_features)
         # self.drop = nn.Dropout(drop, inplace=True)
 
     def forward(self, x, H, W):
@@ -240,10 +240,10 @@ class MlpWODWBN(nn.Module):
         hidden_features = hidden_features or in_features
         self.fc1 = nn.Conv2d(in_features, hidden_features, kernel_size=1)
         self.act1 = act_layer()
-        self.norm1 = nn.SyncBatchNorm(hidden_features)
+        self.norm1 = nn.BatchNorm2d(hidden_features)
         self.fc2 = nn.Conv2d(hidden_features, out_features, kernel_size=1)
         self.act3 = act_layer()
-        self.norm3 = nn.SyncBatchNorm(out_features)
+        self.norm3 = nn.BatchNorm2d(out_features)
         self.drop = nn.Dropout(drop)
 
     def forward(self, x, H, W):
