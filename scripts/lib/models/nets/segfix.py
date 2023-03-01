@@ -36,7 +36,7 @@ class SegFix_HRNet(nn.Module):
         #     in_channels = width * 15
 
         num_masks = 2
-        num_directions = DTOffsetConfig.num_classes
+        num_directions = 8
 
         mid_channels = 256
 

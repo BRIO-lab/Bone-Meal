@@ -16,7 +16,7 @@ import multiprocessing.pool as mpp
 from scipy.ndimage import distance_transform_edt, distance_transform_cdt
 
 script_path = osp.abspath(osp.join(osp.dirname(__file__)))
-os.chdir(osp.join(script_path, '..', '..', '..', '..'))
+os.chdir(osp.join(script_path, '../lib/models', '..', '..', '..'))
 sys.path.insert(0, os.getcwd())
 os.environ['PYTHONPATH'] = os.getcwd() + ':' + os.environ.get('PYTHONPATH', '')
 
