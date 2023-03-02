@@ -8,6 +8,7 @@ import torch.nn.functional as F
 
 from lib.models.backbones.hrt.modules.bottleneck_block import Bottleneck, BottleneckDWP
 from lib.models.backbones.hrt.modules.transformer_block import GeneralTransformerBlock
+from lib.models.backbones.hrt.modules.spatial_ocr_block import SpatialGather_Module, SpatialOCR_Module
 from lib.models.tools.module_helper import ModuleHelper
 from lib.utils.tools.logger import Logger as Log
 
@@ -367,6 +368,35 @@ class HighResolutionTransformer(nn.Module):
             drop_path=dpr[depth_s2 + depth_s3 :],
         )
 
+        ### ADDED
+        in_channels=1170
+        self.conv3x3 = nn.Sequential(
+            nn.Conv2d(in_channels, 512, kernel_size=3, stride=1, padding=1),
+            nn.Sequential(nn.BatchNorm2d(512), nn.ReLU()),
+        )
+        # TODO: change parameter to be # classes
+        self.ocr_gather_head = SpatialGather_Module(2)
+        self.ocr_distri_head = SpatialOCR_Module(
+            in_channels=512,
+            key_channels=256,
+            out_channels=512,
+            scale=1,
+            dropout=0.05,
+            bn_type='torchbn',
+        )
+        # TODO: change second parameter to be # classes
+        self.cls_head = nn.Conv2d(
+            512, 2, kernel_size=1, stride=1, padding=0, bias=True
+        )
+        self.aux_head = nn.Sequential(
+            nn.Conv2d(in_channels, 512, kernel_size=3, stride=1, padding=1),
+            nn.Sequential(nn.BatchNorm2d(512), nn.ReLU()),
+            # TODO: change second parameter to be # classes
+            nn.Conv2d(
+                512, 2, kernel_size=1, stride=1, padding=0, bias=True
+            ),
+        )
+
         if os.environ.get("keep_imagenet_head"):
             (
                 self.incre_modules,
@@ -553,6 +583,7 @@ class HighResolutionTransformer(nn.Module):
         return nn.Sequential(*modules), num_inchannels
 
     def forward(self, x):
+        x_ = x
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu(x)
@@ -598,10 +629,64 @@ class HighResolutionTransformer(nn.Module):
             y = self.final_layer(y)
             del x_list[-1]
             x_list.append(y)
-            return x_list
+
+            # ADDED
+            x = x_list
+            _, _, h, w = x[0].size()
+
+            feat1 = x[0]
+            feat2 = F.interpolate(x[1], size=(h, w), mode="bilinear", align_corners=True)
+            feat3 = F.interpolate(x[2], size=(h, w), mode="bilinear", align_corners=True)
+            feat4 = F.interpolate(x[3], size=(h, w), mode="bilinear", align_corners=True)
+
+            feats = torch.cat([feat1, feat2, feat3, feat4], 1)
+            out_aux = self.aux_head(feats)
+
+            feats = self.conv3x3(feats)
+
+            context = self.ocr_gather_head(feats, out_aux)
+            feats = self.ocr_distri_head(feats, context)
+
+            out = self.cls_head(feats)
+
+            out_aux = F.interpolate(
+                out_aux, size=(x_.size(2), x_.size(3)), mode="bilinear", align_corners=True
+            )
+            out = F.interpolate(
+                out, size=(x_.size(2), x_.size(3)), mode="bilinear", align_corners=True
+            )
+
+            return out_aux, out
+            #return x_list
 
         else:
-            return y_list
+            #ADDED 
+            x = y_list
+            _, _, h, w = x[0].size()
+
+            feat1 = x[0]
+            feat2 = F.interpolate(x[1], size=(h, w), mode="bilinear", align_corners=True)
+            feat3 = F.interpolate(x[2], size=(h, w), mode="bilinear", align_corners=True)
+            feat4 = F.interpolate(x[3], size=(h, w), mode="bilinear", align_corners=True)
+
+            feats = torch.cat([feat1, feat2, feat3, feat4], 1)
+            out_aux = self.aux_head(feats)
+
+            feats = self.conv3x3(feats)
+
+            context = self.ocr_gather_head(feats, out_aux)
+            feats = self.ocr_distri_head(feats, context)
+
+            out = self.cls_head(feats)
+
+            out_aux = F.interpolate(
+                out_aux, size=(x_.size(2), x_.size(3)), mode="bilinear", align_corners=True
+            )
+            out = F.interpolate(
+                out, size=(x_.size(2), x_.size(3)), mode="bilinear", align_corners=True
+            )
+            return out_aux, out
+            #return y_list
 
 
 class HRTBackbone(object):
