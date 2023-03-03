@@ -6,7 +6,7 @@ import numpy as np
 import pytorch_lightning as pl
 import wandb
 
-from lib.models.backcones.backbone_selector import BackboneSelector
+from lib.models.backbones.backbone_selector import BackboneSelector
 from lib.models.backbones.hrt.hrt_config import MODEL_CONFIGS as model_configs
 from lib.models.loss.loss_selector import LossSelector 
 

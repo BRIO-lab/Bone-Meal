@@ -35,7 +35,7 @@ class BackboneSelector(object):
         model = None
 
         if choice == 'hrt_small':
-            model = HRT_SMALL_OCR_V2(config = config)
+            model = HRT_SMALL_OCR_V2(config = self.config)
 
         elif choice == 'hrnet':
             model = PoseHighResolutionNet(

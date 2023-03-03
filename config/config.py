@@ -45,11 +45,19 @@ class Configuration:
         self.datamodule = {
             # *** CHANGE THE IMAGE DIRECTORY TO YOUR OWN ***
             #'IMAGE_DIRECTORY': '/media/sasank/LinuxStorage/Dropbox (UFL)/Canine Kinematics Data/TPLO_Ten_Dogs_grids',
-            'IMAGE_DIRECTORY': '/home/curran.z/blue_zhe.jiang/curran.z/Bone-Meal/images',
+            
+            # Z. Curran:  '/home/curran.z/blue_zhe.jiang/curran.z/Bone-Meal/images'
+            # CWDE: "C:/Users/cwell/Documents/jtml_data/TPLO_Ten_Dogs_grids"
+            
+            'IMAGE_DIRECTORY': "C:/Users/cwell/Documents/jtml_data/TPLO_Ten_Dogs_grids",
             # *** CHANGE THE CHECKPOINT PATH TO YOUR OWN FOR TESTING ***
             #'CKPT_FILE': 'path/to/ckpt/file.ckpt',  # used when loading model from a checkpoint
             # used when loading model from a checkpoint, such as in testing
-            'CKPT_FILE': '/home/curran.z/blue_zhe.jiang/curran.z/Bone-Meal/checkpoints/' + self.init['WANDB_RUN_GROUP'] + self.init['MODEL_NAME'] + '.ckpt', 
+            
+            # Z. Curran : '/home/curran.z/blue_zhe.jiang/curran.z/Bone-Meal/checkpoints/'
+            # CWDE: "C:/Users/cwell/Documents/jtml_data/Checkpoints/"
+            
+            'CKPT_FILE': "C:/Users/cwell/Documents/jtml_data/Checkpoints/" + self.init['WANDB_RUN_GROUP'] + self.init['MODEL_NAME'] + '.ckpt', 
             'BATCH_SIZE': 2,
             'SHUFFLE': True,        # Only for training, for test and val this is set in the datamodule script to False
             'NUM_WORKERS': 4,   # This number seems fine for local but on HPG, we have so many cores that a number like 4 seems better.

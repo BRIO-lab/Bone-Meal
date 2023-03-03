@@ -16,18 +16,16 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from lib.models.backbones.backbone_selector import BackboneSelector
 from lib.models.tools.module_helper import ModuleHelper
-
-
-from lib.models.modules.spatial_ocr_block import SpatialGather_Module, SpatialOCR_Module
+from lib.models.backbones.hrt.hrt_backbone import HRTBackbone
+from lib.models.backbones.hrt.modules.spatial_ocr_block import SpatialGather_Module, SpatialOCR_Module
 
 
 class HRT_SMALL_OCR_V2(nn.Module):
     def __init__(self, config):
         super(HRT_SMALL_OCR_V2, self).__init__()
         self.config = config
-        self.num_class = 2 # CWDE: May need to change, but a pixel is either is in the bone or is not for our data. Changed from self.num_classes = self.configer.get("data", "num_classes")
+        self.num_classes = 2 # CWDE: May need to change, but a pixel is either is in the bone or is not for our data. Changed from self.num_classes = self.configer.get("data", "num_classes")
         self.backbone = HRTBackbone(config)()
 
         in_channels = 480

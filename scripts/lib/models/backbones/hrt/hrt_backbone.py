@@ -613,7 +613,7 @@ class HRTBackbone(object):
         self.config = config
 
     def __call__(self):
-        arch = self.config.hrt_segmentation_net['MODEL_CONFIGS']
+        arch = self.config.hrt_segmentation_net['MODEL_CONFIG']
         from lib.models.backbones.hrt.hrt_config import MODEL_CONFIGS
 
         if arch in [
