@@ -16,17 +16,13 @@ from __future__ import print_function
 #from lib.models.backbones.resnet.resnet_backbone import ResNetBackbone
 #from lib.models.backbones.hrnet.hrnet_backbone import HRNetBackbone
 
-#TODO: add back in once hrnet is working
-#from lib.models.backbones.hrt.hrt_backbone import HRTBackbone
-
+from lib.models.backbones.hrt.hrt import *
 from lib.models.backbones.hrnet.pose_hrnet_module import SegmentationNetModule, PoseHighResolutionNet
 #from lib.models.backbones.swin.swin_backbone import SwinTransformerBackbone
 from lib.utils.tools.logger import Logger as Log
 
-# TODO: convert into a function that takes a Config object rather than a class.
 class BackboneSelector(object):
     def __init__(self, config):
-        # CWDE: Unlike the HRTransformer repository, configer here is a Config object not a Configer object. 
         self.config = config
 
     def get_backbone(self, wandb_run = None, **params):
@@ -38,17 +34,13 @@ class BackboneSelector(object):
 
         model = None
 
-        if choice == 'hrt':
-            # CWDE
-            # TODO: alter HRTBackbone and its constructor to accept a Config object with args for construction.
-            # Will probably have to wait on the Transformer-Segmentation team to deliver
-            model = HRTBackbone(self.config)(**params)
+        if choice == 'hrt_small':
+            model = HRT_SMALL_OCR_V2(config = config)
 
         elif choice == 'hrnet':
-            model = SegmentationNetModule(
-            config=self.config, wandb_run=wandb_run
-            )
-
+            model = PoseHighResolutionNet(
+                                        num_key_points=self.config.segmentation_net_module['NUM_KEY_POINTS'],
+                                        num_image_channels=self.config.segmentation_net_module['NUM_IMG_CHANNELS'])
         else:
             Log.error("Backbone {} is invalid.".format(backbone))
             exit(1)

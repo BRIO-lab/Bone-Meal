@@ -368,41 +368,11 @@ class HighResolutionTransformer(nn.Module):
             drop_path=dpr[depth_s2 + depth_s3 :],
         )
 
-        ### ADDED
-        in_channels=1170
-        self.conv3x3 = nn.Sequential(
-            nn.Conv2d(in_channels, 512, kernel_size=3, stride=1, padding=1),
-            nn.Sequential(nn.BatchNorm2d(512), nn.ReLU()),
-        )
-        # TODO: change parameter to be # classes
-        self.ocr_gather_head = SpatialGather_Module(2)
-        self.ocr_distri_head = SpatialOCR_Module(
-            in_channels=512,
-            key_channels=256,
-            out_channels=512,
-            scale=1,
-            dropout=0.05,
-            bn_type='torchbn',
-        )
-        # TODO: change second parameter to be # classes
-        self.cls_head = nn.Conv2d(
-            512, 2, kernel_size=1, stride=1, padding=0, bias=True
-        )
-        self.aux_head = nn.Sequential(
-            nn.Conv2d(in_channels, 512, kernel_size=3, stride=1, padding=1),
-            nn.Sequential(nn.BatchNorm2d(512), nn.ReLU()),
-            # TODO: change second parameter to be # classes
-            nn.Conv2d(
-                512, 2, kernel_size=1, stride=1, padding=0, bias=True
-            ),
-        )
-
-        if os.environ.get("keep_imagenet_head"):
-            (
-                self.incre_modules,
-                self.downsamp_modules,
-                self.final_layer,
-            ) = self._make_head(pre_stage_channels)
+        (
+            self.incre_modules,
+            self.downsamp_modules,
+            self.final_layer,
+        ) = self._make_head(pre_stage_channels)
 
     def _make_head(self, pre_stage_channels):
         head_block = BottleneckDWP
@@ -616,7 +586,8 @@ class HighResolutionTransformer(nn.Module):
                 x_list.append(y_list[i])
         y_list = self.stage4(x_list)
 
-        if os.environ.get("keep_imagenet_head"):
+        if 1: # Replaced: os.environ.get("keep_imagenet_head"):
+            # CWDE: NOT REACHED ORIGINALLY
             x_list = []
             y = self.incre_modules[0](y_list[0])
             x_list.append(y)
@@ -630,71 +601,19 @@ class HighResolutionTransformer(nn.Module):
             del x_list[-1]
             x_list.append(y)
 
-            # ADDED
-            x = x_list
-            _, _, h, w = x[0].size()
-
-            feat1 = x[0]
-            feat2 = F.interpolate(x[1], size=(h, w), mode="bilinear", align_corners=True)
-            feat3 = F.interpolate(x[2], size=(h, w), mode="bilinear", align_corners=True)
-            feat4 = F.interpolate(x[3], size=(h, w), mode="bilinear", align_corners=True)
-
-            feats = torch.cat([feat1, feat2, feat3, feat4], 1)
-            out_aux = self.aux_head(feats)
-
-            feats = self.conv3x3(feats)
-
-            context = self.ocr_gather_head(feats, out_aux)
-            feats = self.ocr_distri_head(feats, context)
-
-            out = self.cls_head(feats)
-
-            out_aux = F.interpolate(
-                out_aux, size=(x_.size(2), x_.size(3)), mode="bilinear", align_corners=True
-            )
-            out = F.interpolate(
-                out, size=(x_.size(2), x_.size(3)), mode="bilinear", align_corners=True
-            )
-
-            return out_aux, out
-            #return x_list
+            return x_list
 
         else:
-            #ADDED 
-            x = y_list
-            _, _, h, w = x[0].size()
-
-            feat1 = x[0]
-            feat2 = F.interpolate(x[1], size=(h, w), mode="bilinear", align_corners=True)
-            feat3 = F.interpolate(x[2], size=(h, w), mode="bilinear", align_corners=True)
-            feat4 = F.interpolate(x[3], size=(h, w), mode="bilinear", align_corners=True)
-
-            feats = torch.cat([feat1, feat2, feat3, feat4], 1)
-            out_aux = self.aux_head(feats)
-
-            feats = self.conv3x3(feats)
-
-            context = self.ocr_gather_head(feats, out_aux)
-            feats = self.ocr_distri_head(feats, context)
-
-            out = self.cls_head(feats)
-
-            out_aux = F.interpolate(
-                out_aux, size=(x_.size(2), x_.size(3)), mode="bilinear", align_corners=True
-            )
-            out = F.interpolate(
-                out, size=(x_.size(2), x_.size(3)), mode="bilinear", align_corners=True
-            )
-            return out_aux, out
-            #return y_list
+            return y_list
 
 
+# CWDE: Altered to remove dependency on Configer objects 3-3-23
 class HRTBackbone(object):
-    def __init__(self, configer):
-        self.configer = configer
+    def __init__(self, config):
+        self.config = config
 
     def __call__(self):
-        arch = self.configer.get("network", "backbone")
+        arch = self.config.hrt_segmentation_net['MODEL_CONFIGS']
         from lib.models.backbones.hrt.hrt_config import MODEL_CONFIGS
 
         if arch in [
@@ -706,7 +625,7 @@ class HRTBackbone(object):
             arch_net = HighResolutionTransformer(MODEL_CONFIGS[arch])
             arch_net = ModuleHelper.load_model(
                 arch_net,
-                pretrained=self.configer.get("network", "pretrained"),
+                pretrained=None, # CWDE: Effective NO OP on load_model. Note: was self.configer.get("network", "pretrained"), 
                 all_match=False,
                 network="hrt_window" if "win" in arch else "hrt",
             )

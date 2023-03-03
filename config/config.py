@@ -66,7 +66,7 @@ class Configuration:
         
         # network params
         self.net = {
-            'BACKBONE': 'hrnet', # the name of the backbone identified in backbone_selector. Currently have planned support for hrt and hrnet
+            'BACKBONE': 'hrt_small', # the name of the backbone identified in backbone_selector. Currently have planned support for hrt and hrnet
             'ARCHITECTURE' :'seg_hrt', # name of the architecture_builder class file
             'DATA_MODULE' : 'segmentation_data_module'
         }
@@ -83,7 +83,7 @@ class Configuration:
         
         # Params for HRT's segmentation_net_module. Defaults used from HRT's Base config
         self.hrt_segmentation_net = {
-                'MODEL_CONFIG' : 'hrt_base',
+                'MODEL_CONFIG' : 'hrt_small',
                 'LOSS' : 'torch_nn_bce_with_logits_loss'
         }
         

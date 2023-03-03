@@ -6,7 +6,7 @@ import numpy as np
 import pytorch_lightning as pl
 import wandb
 
-from lib.models.backbones.hrt.hrt_backbone import HighResolutionTransformer
+from lib.models.backcones.backbone_selector import BackboneSelector
 from lib.models.backbones.hrt.hrt_config import MODEL_CONFIGS as model_configs
 from lib.models.loss.loss_selector import LossSelector 
 
@@ -16,13 +16,14 @@ class SegmentationNetModule(pl.LightningModule):
         super().__init__()
         self.save_hyperparameters("learning_rate")
         self.config = config    
-        self.pose_hrt = HighResolutionTransformer(cfg = model_configs[self.config.hrt_segmentation_net['MODEL_CONFIG']])
+        self.pose_hrt = BackboneSelector(config).get_backbone()
         print("Pose HRT is on device " + str(next(self.pose_hrt.parameters()).get_device()))     # testing line
         print("Is Pose HRT on GPU? " + str(next(self.pose_hrt.parameters()).is_cuda))            # testing line
         self.pose_hrt.to(device='cuda', dtype=torch.float32)                          # added recently and may fix a lot
         # *** IF the above line causes an error because you do not have CUDA, then just comment it out and the model should run, albeit on the CPU ***
         print("Pose HRT is on device " + str(next(self.pose_hrt.parameters()).get_device()))     # testing line
         print("Is Pose HRT on GPU? " + str(next(self.pose_hrt.parameters()).is_cuda))            # testing line
+        
         self.wandb_run = wandb_run
         self.loss_fn = LossSelector(config = self.config, module_dict = config.hrt_segmentation_net).get_loss()
         self.loss_fn.to(device='cuda', dtype=torch.float32)
@@ -48,16 +49,9 @@ class SegmentationNetModule(pl.LightningModule):
         x = training_batch
         print("Training batch is on device " + str(x.get_device()))         # testing line
         training_output = self.forward(x.cuda())
-        #print(x.shape)
-        #print(training_output[1].shape)
-        #print(training_batch_labels.shape)
-        t = torch.zeros(2,2,1024,1024)
-        t[:,0,:,:] = (training_batch_labels[:,0,:,:]==0).float()
-        t[:,1,:,:] = (training_batch_labels[:,0,:,:]==1).float()
-        loss = self.loss_fn(training_output[1], t.cuda())
+        loss = self.loss_fn(training_output[1], training_batch_labels)
         #self.log('exp_train/loss', loss, on_step=True)
         #self.wandb_run.log('train/loss', loss, on_step=True)
-        print(loss)
         self.wandb_run.log({'train/loss': loss})
         #self.log(name="train/loss", value=loss)
         return loss
@@ -67,18 +61,12 @@ class SegmentationNetModule(pl.LightningModule):
         x = val_batch
         print("Validation batch is on device " + str(x.get_device()))       # testing line
         val_output = self.pose_hrt(x.cuda())
-        t = torch.zeros(2,2,1024,1024)
-        t[:,0,:,:] = (val_batch_labels[:,0,:,:]==0).float()
-        t[:,1,:,:] = (val_batch_labels[:,0,:,:]==1).float()
-        loss = self.loss_fn(val_output[1], t.cuda())
+        loss = self.loss_fn(val_ouput[1], val_batch_labels)
         #self.log('validation/loss', loss)
         #self.wandb_run.log('validation/loss', loss, on_step=True)
         self.wandb_run.log({'validation/loss': loss})
         #self.log('validation/loss', loss)
         image = wandb.Image(val_output[1], caption='Validation output')
-        print(val_output[1])
-        print(torch.nn.functional.softmax(val_output[1][0]))
-        print(torch.nn.functional.softmax(val_output[1][1]))
         self.wandb_run.log({'val_output': image})
         return loss
 

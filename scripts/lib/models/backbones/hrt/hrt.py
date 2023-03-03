@@ -8,6 +8,8 @@
 ## LICENSE file in the root directory of this source tree
 ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+# Altered by CWDE615 on 3-3-23 to remove dependency on Configer objects, which do not appear in the Bone-Meal model builder.
+
 import os
 import math
 import torch
@@ -22,16 +24,16 @@ from lib.models.modules.spatial_ocr_block import SpatialGather_Module, SpatialOC
 
 
 class HRT_SMALL_OCR_V2(nn.Module):
-    def __init__(self, configer):
+    def __init__(self, config):
         super(HRT_SMALL_OCR_V2, self).__init__()
-        self.configer = configer
-        self.num_classes = self.configer.get("data", "num_classes")
-        self.backbone = BackboneSelector(configer).get_backbone()
+        self.config = config
+        self.num_class = 2 # CWDE: May need to change, but a pixel is either is in the bone or is not for our data. Changed from self.num_classes = self.configer.get("data", "num_classes")
+        self.backbone = HRTBackbone(config)()
 
         in_channels = 480
         self.conv3x3 = nn.Sequential(
             nn.Conv2d(in_channels, 512, kernel_size=3, stride=1, padding=1),
-            ModuleHelper.BNReLU(512, bn_type=self.configer.get("network", "bn_type")),
+            ModuleHelper.BNReLU(512, bn_type="torchbn"), # TODO: CWDE: replace hardcoding with actual config query, or replace ModuleHelper call with just BatchNorm2d layer
         )
         self.ocr_gather_head = SpatialGather_Module(self.num_classes)
         self.ocr_distri_head = SpatialOCR_Module(
@@ -40,14 +42,14 @@ class HRT_SMALL_OCR_V2(nn.Module):
             out_channels=512,
             scale=1,
             dropout=0.05,
-            bn_type=self.configer.get("network", "bn_type"),
+            bn_type="torchbn",
         )
         self.cls_head = nn.Conv2d(
             512, self.num_classes, kernel_size=1, stride=1, padding=0, bias=True
         )
         self.aux_head = nn.Sequential(
             nn.Conv2d(in_channels, 512, kernel_size=3, stride=1, padding=1),
-            ModuleHelper.BNReLU(512, bn_type=self.configer.get("network", "bn_type")),
+            ModuleHelper.BNReLU(512, bn_type="torchbn"),
             nn.Conv2d(
                 512, self.num_classes, kernel_size=1, stride=1, padding=0, bias=True
             ),
