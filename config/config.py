@@ -48,11 +48,11 @@ class Configuration:
 
         self.datamodule = {
             # *** CHANGE THE IMAGE DIRECTORY TO YOUR OWN ***
-            #'IMAGE_DIRECTORY': '/media/sasank/LinuxStorage/Dropbox (UFL)/Canine Kinematics Data/TPLO_Ten_Dogs_grids',
-            'IMAGE_DIRECTORY': '/path/to/image/directory',
+            'IMAGE_DIRECTORY': '/media/sasank/LinuxStorage/Dropbox (UFL)/Canine Kinematics Data/TPLO_Ten_Dogs_grids',
+            #'IMAGE_DIRECTORY': '/path/to/image/directory',
             # *** CHANGE THE CHECKPOINT PATH TO YOUR OWN FOR TESTING ***
+            'CKPT_FILE': '/home/sasank/Documents/GitRepos/Lightning-Segmentation/TestModel.ckpt',
             #'CKPT_FILE': 'path/to/ckpt/file.ckpt',  # used when loading model from a checkpoint
-            'CKPT_FILE': None,  # used when loading model from a checkpoint, such as in testing
             'BATCH_SIZE': 1,
             'SHUFFLE': True,        # Only for training, for test and val this is set in the datamodule script to False
             'NUM_WORKERS': os.cpu_count(),   # This number seems fine for local but on HPG, we have so many cores that a number like 4 seems better.
