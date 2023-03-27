@@ -15,6 +15,8 @@ class LossSelector(object):
         
         if func == 'torch_nn_bce_with_logits_loss':
             loss = torch.nn.BCEWithLogitsLoss()
+        elif func == 'torch_nn_bce_loss':
+            loss = torch.nn.BCELoss()
         elif func == 'fsce_loss':
             loss = FSCELoss(configer = None)
         elif func == 'ohem_ce_loss':

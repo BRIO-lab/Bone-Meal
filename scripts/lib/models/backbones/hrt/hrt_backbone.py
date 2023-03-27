@@ -586,7 +586,7 @@ class HighResolutionTransformer(nn.Module):
                 x_list.append(y_list[i])
         y_list = self.stage4(x_list)
 
-        if 1: # Replaced: os.environ.get("keep_imagenet_head"):
+        if os.environ.get("keep_imagenet_head"): # Replaced: os.environ.get("keep_imagenet_head"):
             # CWDE: NOT REACHED ORIGINALLY
             x_list = []
             y = self.incre_modules[0](y_list[0])

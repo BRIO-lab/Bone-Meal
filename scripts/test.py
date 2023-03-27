@@ -12,7 +12,8 @@ import pytorch_lightning as pl
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
 #from pose_hrnet_module import SegmentationNetModule, PoseHighResolutionNet
-from lib.models.backbones.hrnet.pose_hrnet_module import SegmentationNetModule, PoseHighResolutionNet
+from lib.models.nets.pose_hrnet_module import SegmentationNetModule as HRNetSegmentationNetModule
+from lib.models.nets.seg_hrt import SegmentationNetModule as HRTSegmentationNetModule
 from lib.models.datamodules.datamodules import SegmentationDataModule
 from callbacks import JTMLCallback
 from utility import create_config_dict
@@ -44,8 +45,12 @@ def main(config, wandb_run):
     # Since we are using an architecure written in PyTorch (PoseHRNet), we feed that architecture in.
     # We also pass our wandb_run object to we can log.
     if config.datamodule['CKPT_FILE'] != None:
-        model = SegmentationNetModule.load_from_checkpoint(config.datamodule['CKPT_FILE'], config = config, wandb_run = wandb_run)
-        print('Checkpoint file loaded from ' + config.datamodule['CKPT_FILE'])
+        if config.net['ARCHITECTURE'] == 'seg_hrt':
+            model = HRTSegmentationNetModule.load_from_checkpoint(config.datamodule['CKPT_FILE'], config = config, wandb_run = wandb_run, strict=False)
+            print('Checkpoint file loaded from ' + config.datamodule['CKPT_FILE'])
+        elif config.net['ARCHITECTURE'] == 'seg_hrnet':
+            model = HRNetSegmentationNetModule.load_from_checkpoint(config.datamodule['CKPT_FILE'], config = config, wandb_run = wandb_run, strict=False)
+            print('Checkpoint file loaded from ' + config.datamodule['CKPT_FILE'])
     elif config.datamodule['CKPT_FILE'] == None:
       #  try:
       #      model = SegmentationNetModule.load_from_checkpoint(CKPT_DIR + config.init['WANDB_RUN_GROUP'] + '/' + config.init['MODEL_NAME'] +'.ckpt', pose_hrnet=pose_hrnet, wandb_run=wandb_run)

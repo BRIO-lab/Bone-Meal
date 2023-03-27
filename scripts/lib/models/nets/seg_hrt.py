@@ -49,11 +49,13 @@ class SegmentationNetModule(pl.LightningModule):
         x = training_batch
         print("Training batch is on device " + str(x.get_device()))         # testing line
         training_output = self.forward(x.cuda())
-        loss = self.loss_fn(training_output[1], training_batch_labels)
-        #self.log('exp_train/loss', loss, on_step=True)
-        #self.wandb_run.log('train/loss', loss, on_step=True)
+        # Uncomment to save images to visualize training
+        #from torchvision.utils import save_image
+        #save_image(training_batch_labels[0].cpu().detach(), f'0/in.png')
+        #save_image((training_output[0, :, :, :].cpu().detach()>0.25).float(), f'0/pred.png')
+        #
+        loss = self.loss_fn(training_output, training_batch_labels)
         self.wandb_run.log({'train/loss': loss})
-        #self.log(name="train/loss", value=loss)
         return loss
 
     def validation_step(self, validation_batch, batch_idx):
@@ -61,11 +63,13 @@ class SegmentationNetModule(pl.LightningModule):
         x = val_batch
         print("Validation batch is on device " + str(x.get_device()))       # testing line
         val_output = self.pose_hrt(x.cuda())
-        loss = self.loss_fn(val_ouput[1], val_batch_labels)
-        #self.log('validation/loss', loss)
-        #self.wandb_run.log('validation/loss', loss, on_step=True)
+        # Uncomment to save images to visualize validation 
+        #from torchvision.utils import save_image
+        #save_image(val_batch_labels[0].cpu().detach(), f'0/in-val.png')
+        #save_image((val_output[0, :, :, :].cpu().detach()>0.25).float(), f'0/pred-val.png')
+        #
+        loss = self.loss_fn(val_output, val_batch_labels)
         self.wandb_run.log({'validation/loss': loss})
-        #self.log('validation/loss', loss)
         image = wandb.Image(val_output[1], caption='Validation output')
         self.wandb_run.log({'val_output': image})
         return loss

@@ -12,9 +12,9 @@ class Configuration:
             'PROJECT_NAME': 'Segmentation Trial',
             'MODEL_NAME': 'MyModel',
             'RUN_NAME': time.strftime('%Y-%m-%d-%H-%M-%S'),
-            'WANDB_RUN_GROUP': 'Local',
-            'FAST_DEV_RUN': True,  # Runs inputted batches (True->1) and disables logging and some callbacks
-            'MAX_EPOCHS': 100,
+            'WANDB_RUN_GROUP': 'miller-lab',
+            'FAST_DEV_RUN': False,  # Runs inputted batches (True->1) and disables logging and some callbacks
+            'MAX_EPOCHS': 25,
             'MAX_STEPS': -1,    # -1 means it will do all steps and be limited by epochs
             'STRATEGY': None    # This is the training strategy. Should be 'ddp' for multi-GPU (like HPG)
         }
@@ -22,8 +22,8 @@ class Configuration:
             'RAW_DATA_FILE': -1,    # -1 means it will create a full data csv from the image directory, using all images in the image directory
             #'RAW_DATA_FILE': 'my_data.csv',
             'DATA_DIR': "data",
-            'VAL_SIZE':  0.2,       # looks sus
-            'TEST_SIZE': 0.01,      # I'm not sure these two mean what we think
+            'VAL_SIZE':  0.1,       # looks sus
+            'TEST_SIZE': 0.1,      # I'm not sure these two mean what we think
             #'random_state': np.random.randint(1,50)
             # HHG2TG lol; deterministic to aid reproducibility
             'RANDOM_STATE': 42,
@@ -35,30 +35,30 @@ class Configuration:
         self.dataset = {
             'IMAGE_HEIGHT': 1024,
             'IMAGE_WIDTH': 1024,
-            'MODEL_TYPE': 'fem',        # specifies that it's a femur model. how should we do this? not clear this is still best...
+            'MODEL_TYPE': 'tib',        # specifies that it's a femur model. how should we do this? not clear this is still best...
             'CLASS_LABELS': {0: 'bone', 1: 'background'},
             'IMG_CHANNELS': 1,      # Is this differnt from self.module['NUM_IMAGE_CHANNELS']
             'IMAGE_THRESHOLD': 0,
-            'USE_ALBUMENTATIONS': True
+            'USE_ALBUMENTATIONS': False
         }
 
         self.datamodule = {
             # *** CHANGE THE IMAGE DIRECTORY TO YOUR OWN ***
             #'IMAGE_DIRECTORY': '/media/sasank/LinuxStorage/Dropbox (UFL)/Canine Kinematics Data/TPLO_Ten_Dogs_grids',
             
-            # Z. Curran:  '/home/curran.z/blue_zhe.jiang/curran.z/Bone-Meal/images'
+            # Z. Curran:  '/home/curran.z/blue_zhe.jiang/curran.z/BM/images'
             # CWDE: "C:/Users/cwell/Documents/jtml_data/TPLO_Ten_Dogs_grids"
             
-            'IMAGE_DIRECTORY': "C:/Users/cwell/Documents/jtml_data/TPLO_Ten_Dogs_grids",
+            'IMAGE_DIRECTORY': '/home/curran.z/blue_zhe.jiang/curran.z/BM/images',
             # *** CHANGE THE CHECKPOINT PATH TO YOUR OWN FOR TESTING ***
             #'CKPT_FILE': 'path/to/ckpt/file.ckpt',  # used when loading model from a checkpoint
             # used when loading model from a checkpoint, such as in testing
             
-            # Z. Curran : '/home/curran.z/blue_zhe.jiang/curran.z/Bone-Meal/checkpoints/'
+            # Z. Curran : '/home/curran.z/blue_zhe.jiang/curran.z/BM/Bone-Meal/checkpoints/'
             # CWDE: "C:/Users/cwell/Documents/jtml_data/Checkpoints/"
             
-            'CKPT_FILE': "C:/Users/cwell/Documents/jtml_data/Checkpoints/" + self.init['WANDB_RUN_GROUP'] + self.init['MODEL_NAME'] + '.ckpt', 
-            'BATCH_SIZE': 2,
+            'CKPT_FILE': '/home/curran.z/blue_zhe.jiang/curran.z/BM/Bone-Meal/checkpoints/' + self.init['WANDB_RUN_GROUP'] + self.init['MODEL_NAME'] + '.ckpt', 
+            'BATCH_SIZE': 4,
             'SHUFFLE': True,        # Only for training, for test and val this is set in the datamodule script to False
             'NUM_WORKERS': 4,   # This number seems fine for local but on HPG, we have so many cores that a number like 4 seems better.
             'PIN_MEMORY': False,
@@ -74,8 +74,10 @@ class Configuration:
         
         # network params
         self.net = {
-            'BACKBONE': 'hrt_small', # the name of the backbone identified in backbone_selector. Currently have planned support for hrt and hrnet
-            'ARCHITECTURE' :'seg_hrt', # name of the architecture_builder class file
+            # 'hrt_small', 'hrnet'
+            # 'seg_hrt', 'seg_hrnet'
+            'BACKBONE': 'hrnet', # the name of the backbone identified in backbone_selector. Currently have planned support for hrt and hrnet
+            'ARCHITECTURE' :'seg_hrnet', # name of the architecture_builder class file
             'DATA_MODULE' : 'segmentation_data_module'
         }
         
@@ -92,13 +94,17 @@ class Configuration:
         # Params for HRT's segmentation_net_module. Defaults used from HRT's Base config
         self.hrt_segmentation_net = {
                 'MODEL_CONFIG' : 'hrt_small',
-                'LOSS' : 'torch_nn_bce_with_logits_loss'
+                'LOSS' : 'torch_nn_bce_loss'
         }
         
         # PARAMS FOR LOSS FUNCTIONS (Format: self.[name of loss in self.backbone] = { params dict })
         
         # Params dict for BCEWithLogitsLoss, which takes no params in the origin model from Lightning Segmentation.
         self.torch_nn_bce_with_logits_loss = {
+            # NO PARAMS
+        }
+
+        self.torch_nn_bce_loss = {
             # NO PARAMS
         }
         

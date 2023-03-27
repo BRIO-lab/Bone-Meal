@@ -53,6 +53,15 @@ class HRT_SMALL_OCR_V2(nn.Module):
             ),
         )
 
+    def segmentation_head(self, input):
+        sig = torch.nn.Sigmoid()
+        res = sig(input)
+        res = res[:, 0, :, :]
+        #res = torch.max(res, dim = 1)[0]
+        #res = torch.where((res[0].cuda() > 0.5) & (res[1].cuda() == 1), 1, 0)
+        res = torch.unsqueeze(res, dim=1)
+        return res
+
     def forward(self, x_):
         x = self.backbone(x_)
         _, _, h, w = x[0].size()
@@ -78,7 +87,8 @@ class HRT_SMALL_OCR_V2(nn.Module):
         out = F.interpolate(
             out, size=(x_.size(2), x_.size(3)), mode="bilinear", align_corners=True
         )
-        return out_aux, out
+        #return out_aux, out
+        return self.segmentation_head(out)
 
 
 class HRT_BASE_OCR_V2(nn.Module):

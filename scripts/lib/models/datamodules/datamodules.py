@@ -21,7 +21,9 @@ class SegmentationDataModule(pl.LightningDataModule):
         self.img_dir = self.config.datamodule['IMAGE_DIRECTORY']
         self.train_data = os.getcwd() + '/data/' + self.config.init['MODEL_NAME'] + '/' + 'train_' + self.config.init['MODEL_NAME'] + '.csv'
         self.val_data = os.getcwd() + '/data/' + self.config.init['MODEL_NAME'] + '/' + 'val_' + self.config.init['MODEL_NAME'] + '.csv'
+        # FIRST IS REAL TEST SET
         self.test_data = os.getcwd() + '/data/' + self.config.init['MODEL_NAME'] + '/' + 'test_' + self.config.init['MODEL_NAME'] + '.csv'
+        #self.test_data = os.getcwd() + '/data/' + self.config.init['MODEL_NAME'] + '/' + 'val_' + self.config.init['MODEL_NAME'] + '.csv'
 
         # Data loader parameters
         # TODO: clean this up since we pulled config into this class

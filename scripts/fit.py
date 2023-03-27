@@ -41,11 +41,11 @@ def main(config, wandb_run):
     """
     model = ArchitectureSelector(config, wandb_run).get_architecture()
     # This is a callback that should help us with stopping validation when it's time but isn't working.
-    save_best_val_checkpoint_callback = ModelCheckpoint(monitor='validation/loss',
-                                                        mode='min',
-                                                        dirpath='checkpoints/',
-                                                        filename=wandb_run.name)
-                                                        #filename=wandb.run.name)
+    #save_best_val_checkpoint_callback = ModelCheckpoint(monitor='validation/loss',
+    #                                                    mode='min',
+    #                                                    dirpath='checkpoints/',
+    #                                                    filename=wandb_run.name)
+    #                                                    #filename=wandb.run.name)
 
     # Our trainer object contains a lot of important info.
     trainer = pl.Trainer(
@@ -62,7 +62,9 @@ def main(config, wandb_run):
         fast_dev_run=config.init['FAST_DEV_RUN'],
         max_epochs=config.init['MAX_EPOCHS'],
         max_steps=config.init['MAX_STEPS'],
-        strategy=config.init['STRATEGY'])
+        strategy=config.init['STRATEGY'],
+        check_val_every_n_epoch=5)
+        #val_check_interval=config.init['MAX_STEPS'])
     
     # This is the step where everything happens.
     # Fitting includes both training and validation.
