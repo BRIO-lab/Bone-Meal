@@ -11,8 +11,6 @@ import torch
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
-from pose_hrnet_module import SegmentationNetModule, PoseHighResolutionNet
-from datamodule import SegmentationDataModule
 from callbacks import JTMLCallback
 from utility import create_config_dict
 #import click
@@ -20,7 +18,12 @@ import sys
 import os
 import time
 import wandb
+from build import build_model 
+# want to refactor more
 
+# CWDE: 2-23 & 24-2023
+from lib.models.datamodules.datamodule_selector import DataModuleSelector
+from lib.models.nets.architecture_selector import ArchitectureSelector
 
 """
 The main function contains the neural network-related code.
@@ -28,22 +31,21 @@ The main function contains the neural network-related code.
 def main(config, wandb_run):
 
     # The DataModule object loads the data from CSVs, calls the JTMLDataset to get data, and creates the dataloaders.
-    data_module = SegmentationDataModule(config=config)
-
-    # This is the real architecture we're using. It is vanilla PyTorch - no Lightning.
-    #pose_hrnet = PoseHighResolutionNet(num_key_points=1, num_image_channels=config.module['NUM_IMAGE_CHANNELS'])
+    #CWDE: 2-23-23 Changed to use DataModuleSelector
+    data_selector = DataModuleSelector(config = config)
+    data_module = data_selector.get_datamodule()
     
-    # This is our LightningModule, which where the architecture is supposed to go.
-    # Since we are using an architecure written in PyTorch (PoseHRNet), we feed that architecture in.
-    # We also pass our wandb_run object to we can log.
-    model = SegmentationNetModule(config=config, wandb_run=wandb_run) # I can put some data module stuff in this argument if I want
-
+    
+    """
+    Call to Build is made inside of Architecture Selector
+    """
+    model = ArchitectureSelector(config, wandb_run).get_architecture()
     # This is a callback that should help us with stopping validation when it's time but isn't working.
-    save_best_val_checkpoint_callback = ModelCheckpoint(monitor='validation/loss',
-                                                        mode='min',
-                                                        dirpath='checkpoints/',
-                                                        filename=wandb_run.name)
-                                                        #filename=wandb.run.name)
+    #save_best_val_checkpoint_callback = ModelCheckpoint(monitor='validation/loss',
+    #                                                    mode='min',
+    #                                                    dirpath='checkpoints/',
+    #                                                    filename=wandb_run.name)
+    #                                                    #filename=wandb.run.name)
 
     # Our trainer object contains a lot of important info.
     trainer = pl.Trainer(
@@ -60,7 +62,9 @@ def main(config, wandb_run):
         fast_dev_run=config.init['FAST_DEV_RUN'],
         max_epochs=config.init['MAX_EPOCHS'],
         max_steps=config.init['MAX_STEPS'],
-        strategy=config.init['STRATEGY'])
+        strategy=config.init['STRATEGY'],
+        check_val_every_n_epoch=5)
+        #val_check_interval=config.init['MAX_STEPS'])
     
     # This is the step where everything happens.
     # Fitting includes both training and validation.
@@ -75,16 +79,19 @@ def main(config, wandb_run):
     wandb_run.config.update({'Model Save Directory': CKPT_DIR + config.init['WANDB_RUN_GROUP'] + '/' + config.init['MODEL_NAME'] + '.ckpt'})
 
 if __name__ == '__main__':
+    
 
     ## Setting up the config
     # Parsing the config file
     CONFIG_DIR = os.getcwd() + '/config/'
     sys.path.append(CONFIG_DIR)
+
+    # CWDE
+    # load config file. Argument one should be the name of the file without the .py extension.
     config_module = import_module(sys.argv[1])
-
-    # Instantiating the config file
+    
+     # Instantiating the config file
     config = config_module.Configuration()
-
     # Setting the checkpoint directory
     CKPT_DIR = os.getcwd() + '/checkpoints/'
 
@@ -103,8 +110,10 @@ if __name__ == '__main__':
         #dir='logs/'
         #save_dir='/logs/'
     )
+    #wandb_placeholder = wandb.init()
 
     main(config, wandb_run)
+    #main(config, wandb_placeholder)
 
     # Sync and close the Wandb logging. Good to have for DDP, I believe.
     wandb.finish()

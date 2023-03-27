@@ -6,6 +6,7 @@ This is to handle callbacks to keep our code clean and nice."""
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import Callback
 from pytorch_lightning.callbacks import ModelCheckpoint
+import torch
 import wandb
 import math
 from utility import run_metrics
@@ -110,7 +111,7 @@ class JTMLCallback(Callback):
             img_name = batch['img_name'][idx]
             input_image = batch['image'][idx][0]
             label_image = batch['label'][idx][0]
-            output_image = val_outputs[idx][0]
+            output_image = torch.round(val_outputs[idx][0])
             
             # Inputs
             wandb_input = wandb.Image(input_image, caption=img_name)
@@ -183,7 +184,7 @@ class JTMLCallback(Callback):
             img_name = batch['img_name'][idx]
             input_image = batch['image'][idx][0]
             label_image = batch['label'][idx][0]
-            output_image = test_outputs[idx][0]
+            output_image = torch.round(test_outputs[idx][0])
             
             # Inputs
             wandb_input = wandb.Image(input_image, caption=img_name)

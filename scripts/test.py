@@ -11,8 +11,10 @@ import torch
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
-from pose_hrnet_module import SegmentationNetModule, PoseHighResolutionNet
-from datamodule import SegmentationDataModule
+#from pose_hrnet_module import SegmentationNetModule, PoseHighResolutionNet
+from lib.models.nets.pose_hrnet_module import SegmentationNetModule as HRNetSegmentationNetModule
+from lib.models.nets.seg_hrt import SegmentationNetModule as HRTSegmentationNetModule
+from lib.models.datamodules.datamodules import SegmentationDataModule
 from callbacks import JTMLCallback
 from utility import create_config_dict
 #import click
@@ -23,6 +25,8 @@ import wandb
 
 #torch.manual_seed(42) # haha HG2G
 
+# CWDE: 2-24-2023
+from lib.models.datamodules.datamodule_selector import DataModuleSelector
 
 """
 The main function contains the neural network-related code.
@@ -30,8 +34,10 @@ The main function contains the neural network-related code.
 
 def main(config, wandb_run):
     # The DataModule object loads the data from CSVs, calls the JTMLDataset to get data, and creates the dataloaders.
-    data_module = SegmentationDataModule(
-        config=config)
+    # CWDE : 2-24-2023
+    data_selector = DataModuleSelector(config = config)
+    data_module = data_selector.get_datamodule()
+    
     # This is the real architecture we're using. It is vanilla PyTorch - no Lightning.
     #pose_hrnet = PoseHighResolutionNet(num_key_points=1, num_image_channels=config.module['NUM_IMAGE_CHANNELS'])
     #model = MyLightningModule(pose_hrnet=pose_hrnet, wandb_run=wandb_run).load_from_checkpoint(CKPT_DIR + config.init['RUN_NAME'] + '.ckpt')
@@ -39,13 +45,18 @@ def main(config, wandb_run):
     # Since we are using an architecure written in PyTorch (PoseHRNet), we feed that architecture in.
     # We also pass our wandb_run object to we can log.
     if config.datamodule['CKPT_FILE'] != None:
-        model = SegmentationNetModule.load_from_checkpoint(config.datamodule['CKPT_FILE'], pose_hrnet=pose_hrnet, wandb_run=wandb_run)
-        print('Checkpoint file loaded from ' + config.datamodule['CKPT_FILE'])
+        if config.net['ARCHITECTURE'] == 'seg_hrt':
+            model = HRTSegmentationNetModule.load_from_checkpoint(config.datamodule['CKPT_FILE'], config = config, wandb_run = wandb_run, strict=False)
+            print('Checkpoint file loaded from ' + config.datamodule['CKPT_FILE'])
+        elif config.net['ARCHITECTURE'] == 'seg_hrnet':
+            model = HRNetSegmentationNetModule.load_from_checkpoint(config.datamodule['CKPT_FILE'], config = config, wandb_run = wandb_run, strict=False)
+            print('Checkpoint file loaded from ' + config.datamodule['CKPT_FILE'])
     elif config.datamodule['CKPT_FILE'] == None:
-        try:
-            model = SegmentationNetModule.load_from_checkpoint(CKPT_DIR + config.init['WANDB_RUN_GROUP'] + '/' + config.init['MODEL_NAME'] +'.ckpt', pose_hrnet=pose_hrnet, wandb_run=wandb_run)
-        except:
-            print("No checkpoint .ckpt file in default location at " + CKPT_DIR + config.init['WANDB_RUN_GROUP'] + '/' + config.init['MODEL_NAME'] +'.ckpt')
+      #  try:
+      #      model = SegmentationNetModule.load_from_checkpoint(CKPT_DIR + config.init['WANDB_RUN_GROUP'] + '/' + config.init['MODEL_NAME'] +'.ckpt', pose_hrnet=pose_hrnet, wandb_run=wandb_run)
+      #  except:
+      #      print("No checkpoint .ckpt file in default location at " + CKPT_DIR + config.init['WANDB_RUN_GROUP'] + '/' + config.init['MODEL_NAME'] +'.ckpt')
+        raise NotImplementedError("There is no .ckpt file specified in config's datamodule dict.")
     #model = MyLightningModule(pose_hrnet=pose_hrnet, wandb_run=wandb_run)
     #model = model.load_from_checkpoint(CKPT_DIR + config.init['RUN_NAME'] + '.ckpt')
 

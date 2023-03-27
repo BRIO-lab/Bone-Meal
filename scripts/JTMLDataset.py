@@ -21,7 +21,7 @@ class LitJTMLDataset(Dataset):
 
         self.config = config
         self.transform = self.config.transform
-        #self.img_dir = '/media/sasank/LinuxStorage/Dropbox (UFL)/Canine Kinematics Data/TPLO_Ten_Dogs_grids'
+        #self.img_dir = '../../../ImageSegmentation/Img/TPLO_Ten_Dogs_grids'
         self.img_dir = img_dir
         #self.img_dir = '/blue/banks/sasank.desaraju/Sasank_JTML_seg/Images/TPLO_Tend_Dogs_grids_2_22_22'
         #self.data_dir = ''  # I don't know if this will actually get used if I pass in a loaded dataset
@@ -42,7 +42,7 @@ class LitJTMLDataset(Dataset):
         #print(self.config.data_constants['MODEL_TYPE'])
         for i,j in enumerate(self.dataset[0,:]):
             #if j == self.config.data_constants['MODEL_TYPE']:
-            if j == 'fem':
+            if j == config.dataset['MODEL_TYPE']:
                 self.labels = self.dataset[1:,i]
         
         # label check
@@ -76,11 +76,8 @@ class LitJTMLDataset(Dataset):
             image = transformed["image"]
             label = transformed["mask"]
 
-        
         image = torch.FloatTensor(image[None, :, :])
         label = torch.FloatTensor(label[None, :, :])
         img_name = self.images[idx]
         sample = {'image': image, 'label': label, 'img_name': img_name}
-
-
         return sample
