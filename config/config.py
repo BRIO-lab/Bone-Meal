@@ -33,12 +33,14 @@ class Configuration:
         }
 
         self.dataset = {
+            'DATA_NAME': 'Ten_Dogs_64KP',
             'IMAGE_HEIGHT': 1024,
             'IMAGE_WIDTH': 1024,
             'MODEL_TYPE': 'tib',        # specifies that it's a femur model. how should we do this? not clear this is still best...
             'CLASS_LABELS': {0: 'bone', 1: 'background'},
             'IMG_CHANNELS': 1,      # Is this differnt from self.module['NUM_IMAGE_CHANNELS']
             'IMAGE_THRESHOLD': 0,
+            'SUBSET_PIXELS': True,
             'USE_ALBUMENTATIONS': False
         }
 
@@ -62,7 +64,8 @@ class Configuration:
             'SHUFFLE': True,        # Only for training, for test and val this is set in the datamodule script to False
             'NUM_WORKERS': 4,   # This number seems fine for local but on HPG, we have so many cores that a number like 4 seems better.
             'PIN_MEMORY': False,
-            'SUBSET_PIXELS': True
+            #'SUBSET_PIXELS': True,
+            'USE_NAIVE_TEST_SET': False
         }
 
         # hyperparameters for training
@@ -134,4 +137,6 @@ class Configuration:
         A.InvertImg(always_apply=False, p=0.5),
         A.CoarseDropout(always_apply = False, p = 0.25, min_holes = 1, max_holes = 100, min_height = 25, max_height=25),
         A.MultiplicativeNoise(always_apply=False, p=0.25, multiplier=(0.1, 2), per_channel=True, elementwise=True)
-    ], p=0.85)
+    ],
+    keypoint_params=A.KeypointParams(format='xy', remove_invisible=False),
+    p=0.85)
