@@ -29,7 +29,7 @@ from lib.models.nets.architecture_selector import ArchitectureSelector
 The main function contains the neural network-related code.
 """
 def main(config, wandb_run):
-
+    torch.cuda.empty_cache()
     # The DataModule object loads the data from CSVs, calls the JTMLDataset to get data, and creates the dataloaders.
     #CWDE: 2-23-23 Changed to use DataModuleSelector
     data_selector = DataModuleSelector(config = config)
