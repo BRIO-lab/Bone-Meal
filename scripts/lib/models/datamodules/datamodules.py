@@ -47,6 +47,7 @@ class SegmentationDataModule(pl.LightningDataModule):
         #self.log(batch_size=self.batch_size)
         # other constants
 
+        # CWDE: Likely no longer required since JTMLDataset reads from csv and doesn't take them.
         self.train_set = np.genfromtxt(self.train_data, delimiter=',', dtype=str)
         self.val_set = np.genfromtxt(self.val_data, delimiter=',', dtype=str)
         self.test_set = np.genfromtxt(self.test_data, delimiter=',', dtype=str)
@@ -77,15 +78,22 @@ class SegmentationDataModule(pl.LightningDataModule):
         created_dataset = LitJTMLDataset(dataset)
         """
 
+        transform = self.config.transform
+
         self.training_set = LitJTMLDataset(config=self.config,
-                                            dataset=self.train_set,
-                                            img_dir=self.img_dir)
+                                            evaluation_type='train',
+                                            transform = transform)
         self.validation_set = LitJTMLDataset(config=self.config,
-                                            dataset=self.val_set,
-                                            img_dir=self.img_dir)
+                                            evaluation_type='val',
+                                            transform = transform)
         self.test_set = LitJTMLDataset(config=self.config,
-                                            dataset=self.test_set,
-                                            img_dir=self.img_dir)
+                                            evaluation_type='test',
+                                            transform = transform)
+
+        # VWDE: add the naive set from Sasank's new data following the format of the others.
+        self.naive_set = LitJTMLDataset(config = self.config,
+                                        evaluation_type = 'naive',
+                                        transform = transform)
 
         return
 

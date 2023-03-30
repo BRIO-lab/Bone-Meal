@@ -48,7 +48,7 @@ def create_config_dict(config) -> dict:
                     'datamodule/Shuffle': config.datamodule['SHUFFLE'],
                     'datamodule/Num Workers': config.datamodule['NUM_WORKERS'],
                     'datamodule/Pin Memory': config.datamodule['PIN_MEMORY'],
-                    'datamodule/Subset Pixels': config.datamodule['SUBSET_PIXELS'],
+                    'datamodule/Subset Pixels': config.dataset['SUBSET_PIXELS'],
                     #'module/Loss Function': config.module['LOSS_FN'],
                     #'module/Num Image Channels': config.module['NUM_IMAGE_CHANNELS'],
                     'hparams/Load From Checkpoint': config.hparams['LOAD_FROM_CHECKPOINT'],
