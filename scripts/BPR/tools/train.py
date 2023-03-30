@@ -3,17 +3,25 @@ import copy
 import os
 import os.path as osp
 import time
+import wandb
+import pytorch_lightning as pl
+from callbacks import JTMLCallback
+import sys
 
 import mmcv
 import torch
 from mmcv.runner import init_dist
 from mmcv.utils import Config, DictAction, get_git_hash
+from importlib import import_module
 
 from BPR.mmseg import __version__
 from BPR.mmseg.apis import set_random_seed, train_segmentor
 from BPR.mmseg.datasets import build_dataset
 from BPR.mmseg.models import build_segmentor
 from BPR.mmseg.utils import collect_env, get_root_logger
+
+from lib.models.datamodules.datamodule_selector import DataModuleSelector
+from utility import create_config_dict
 
 
 def parse_args():
@@ -60,7 +68,7 @@ def parse_args():
     return args
 
 
-def main():
+def main(config, wandb_run):
     args = parse_args()
 
     cfg = Config.fromfile(args.config)
@@ -127,33 +135,83 @@ def main():
 
     model = build_segmentor(
         cfg.model, train_cfg=cfg.train_cfg, test_cfg=cfg.test_cfg)
-
-
-    datasets = [build_dataset(cfg.data.train)]
-    logger.info(datasets)
-    if len(cfg.workflow) == 2:
-        val_dataset = copy.deepcopy(cfg.data.val)
-        val_dataset.pipeline = cfg.data.train.pipeline
-        datasets.append(build_dataset(val_dataset))
-    if cfg.checkpoint_config is not None:
-        # save mmseg version, config file content and class names in
-        # checkpoints as meta data
-        cfg.checkpoint_config.meta = dict(
-            mmseg_version=f'{__version__}+{get_git_hash()[:7]}',
-            config=cfg.pretty_text,
-            CLASSES=datasets[0].CLASSES,
-            PALETTE=datasets[0].PALETTE)
-    # add an attribute for visualization convenience
-    model.CLASSES = datasets[0].CLASSES
-    train_segmentor(
-        model,
-        datasets,
-        cfg,
-        distributed=distributed,
-        validate=(not args.no_validate),
-        timestamp=timestamp,
-        meta=meta)
-
+    # datasets = [build_dataset(cfg.data.train)]
+    # logger.info(datasets)
+    # if len(cfg.workflow) == 2:
+    #     val_dataset = copy.deepcopy(cfg.data.val)
+    #     val_dataset.pipeline = cfg.data.train.pipeline
+    #     datasets.append(build_dataset(val_dataset))
+    # if cfg.checkpoint_config is not None:
+    #     # save mmseg version, config file content and class names in
+    #     # checkpoints as meta data
+    #     cfg.checkpoint_config.meta = dict(
+    #         mmseg_version=f'{__version__}+{get_git_hash()[:7]}',
+    #         config=cfg.pretty_text,
+    #         CLASSES=datasets[0].CLASSES,
+    #         PALETTE=datasets[0].PALETTE)
+    # # add an attribute for visualization convenience
+    # model.CLASSES = datasets[0].CLASSES
+    trainer = pl.Trainer(
+        # If the below line is an error, change it to cpu and 1 device
+        accelerator='gpu',
+        # accelerator='cpu',
+        devices=-1,  # use all available devices (GPUs)
+        # devices=1,
+        auto_select_gpus=True,  # helps use all GPUs, not quite understood...
+        # logger=wandb_logger,   # tried to use a WandbLogger object. Hasn't worked...
+        default_root_dir=os.getcwd(),
+        callbacks=[JTMLCallback(config, wandb_run)],  # pass in the callbacks we want
+        # callbacks=[JTMLCallback(config, wandb_run), save_best_val_checkpoint_callback],
+        fast_dev_run=config.init['FAST_DEV_RUN'],
+        max_epochs=config.init['MAX_EPOCHS'],
+        max_steps=config.init['MAX_STEPS'],
+        strategy=config.init['STRATEGY'])
+    # train_segmentor(
+    #     model,
+    #     datasets,
+    #     cfg,
+    #     distributed=distributed,
+    #     validate=(not args.no_validate),
+    #     timestamp=timestamp,
+    #     meta=meta)
+    data_selector = DataModuleSelector(config=config)
+    data_module = data_selector.get_datamodule()
+    trainer.fit(model, data_module)
 
 if __name__ == '__main__':
-    main()
+     ## Setting up the config
+    # Parsing the config file
+    CONFIG_DIR = os.getcwd() + '/config/'
+    sys.path.append(CONFIG_DIR)
+
+    # CWDE
+    # load config file. Argument one should be the name of the file without the .py extension.
+    config_module = import_module(sys.argv[1])
+
+     # Instantiating the config file
+    config = config_module.Configuration()
+    # Setting the checkpoint directory
+    CKPT_DIR = os.getcwd() + '/checkpoints/'
+
+    ## Setting up the logger
+    # Setting the run group as an environment variable. Mostly for DDP (on HPG)
+    os.environ['WANDB_RUN_GROUP'] = config.init['WANDB_RUN_GROUP']
+
+    # Creating the Wandb run object
+    wandb_run = wandb.init(
+        project=config.init['PROJECT_NAME'],    # Leave the same for the project (e.g. JTML_seg)
+        name=config.init['RUN_NAME'],           # Should be diff every time to avoid confusion (e.g. current time)
+        group=config.init['WANDB_RUN_GROUP'],
+        job_type='fit',                         # Lets us know in Wandb that this was a fit run
+        config=create_config_dict(config)
+        #id=str(time.strftime('%Y-%m-%d-%H-%M-%S'))     # this can be used for custom run ids but must be unique
+        #dir='logs/'
+        #save_dir='/logs/'
+    )
+    #wandb_placeholder = wandb.init()
+
+    main(config, wandb_run)
+    #main(config, wandb_placeholder)
+
+    # Sync and close the Wandb logging. Good to have for DDP, I believe.
+    wandb.finish()
