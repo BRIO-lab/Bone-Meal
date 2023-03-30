@@ -71,7 +71,8 @@ def parse_args():
 def main(config, wandb_run):
     args = parse_args()
 
-    cfg = Config.fromfile(args.config)
+    cfg = Config.fromfile(os.getcwd()+'/BPR/configs/bpr/hrnet18s_128.py')
+    print(cfg)
     if args.options is not None:
         cfg.merge_from_dict(args.options)
     # set cudnn_benchmark
@@ -105,11 +106,11 @@ def main(config, wandb_run):
     # create work_dir
     mmcv.mkdir_or_exist(osp.abspath(cfg.work_dir))
     # dump config
-    cfg.dump(osp.join(cfg.work_dir, osp.basename(args.config)))
+    # cfg.dump(osp.join(cfg.work_dir, osp.basename(args.config)))
     # init the logger before other steps
-    timestamp = time.strftime('%Y%m%d_%H%M%S', time.localtime())
-    log_file = osp.join(cfg.work_dir, f'{timestamp}.log')
-    logger = get_root_logger(log_file=log_file, log_level=cfg.log_level)
+    # timestamp = time.strftime('%Y%m%d_%H%M%S', time.localtime())
+    # log_file = osp.join(cfg.work_dir, f'{timestamp}.log')
+    # logger = get_root_logger(log_file=log_file, log_level=cfg.log_level)
 
     # init the meta dict to record some important information such as
     # environment info and seed, which will be logged
@@ -126,8 +127,8 @@ def main(config, wandb_run):
 
     # set random seeds
     if args.seed is not None:
-        logger.info(f'Set random seed to {args.seed}, deterministic: '
-                    f'{args.deterministic}')
+        # logger.info(f'Set random seed to {args.seed}, deterministic: '
+        #             f'{args.deterministic}')
         set_random_seed(args.seed, deterministic=args.deterministic)
     cfg.seed = args.seed
     meta['seed'] = args.seed
@@ -181,7 +182,7 @@ def main(config, wandb_run):
 if __name__ == '__main__':
      ## Setting up the config
     # Parsing the config file
-    CONFIG_DIR = os.getcwd() + '/config/'
+    CONFIG_DIR = 'C:/Users/echen/PycharmProjects/Bone-Meal' + '/config/'
     sys.path.append(CONFIG_DIR)
 
     # CWDE

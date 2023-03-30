@@ -16,12 +16,12 @@ from JTMLDataset import LitJTMLDataset
 class SegmentationDataModule(pl.LightningDataModule):
     def __init__(self, config):
         super().__init__()
-
+        WORK_DIR = 'C:/Users/echen/PycharmProjects/Bone-Meal'
         self.config = config
         self.img_dir = self.config.datamodule['IMAGE_DIRECTORY']
-        self.train_data = os.getcwd() + '/data/' + self.config.init['MODEL_NAME'] + '/' + 'train_' + self.config.init['MODEL_NAME'] + '.csv'
-        self.val_data = os.getcwd() + '/data/' + self.config.init['MODEL_NAME'] + '/' + 'val_' + self.config.init['MODEL_NAME'] + '.csv'
-        self.test_data = os.getcwd() + '/data/' + self.config.init['MODEL_NAME'] + '/' + 'test_' + self.config.init['MODEL_NAME'] + '.csv'
+        self.train_data = WORK_DIR + '/data/' + self.config.init['MODEL_NAME'] + '/' + 'train_' + self.config.init['MODEL_NAME'] + '.csv'
+        self.val_data = WORK_DIR + '/data/' + self.config.init['MODEL_NAME'] + '/' + 'val_' + self.config.init['MODEL_NAME'] + '.csv'
+        self.test_data = WORK_DIR + '/data/' + self.config.init['MODEL_NAME'] + '/' + 'test_' + self.config.init['MODEL_NAME'] + '.csv'
 
         # Data loader parameters
         # TODO: clean this up since we pulled config into this class

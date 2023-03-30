@@ -31,7 +31,7 @@ class HRNetRefine(HRNet):
             in resblocks to let them behave as identity.
 
     Example:
-        >>> from mmseg.models import HRNet
+        >>> from BPR.mmseg.models import HRNet
         >>> import torch
         >>> extra = dict(
         >>>     stage1=dict(
