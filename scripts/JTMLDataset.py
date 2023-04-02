@@ -122,7 +122,10 @@ class LitJTMLDataset(Dataset):
         seg_label = torch.FloatTensor(seg_label[None, :, :])
         #kp_label = torch.FloatTensor(kp_label.reshape(-1))      # Reshape to 1D array so that it's 2*num_keypoints long
         kp_label = torch.FloatTensor(kp_label)          # kp_label is of shape (num_keypoints, 2)
-        assert kp_label.shape == (self.num_points, 2), "Keypoint label shape is incorrect!"
+
+        # CWDE: Removed so that segmentation can occur without implementing the KP data fully
+        # assert kp_label.shape == (self.num_points, 2), "Keypoint label shape is incorrect!"
+
         #print("kp_label.shape:")
         #print(kp_label.shape)
 
@@ -133,6 +136,9 @@ class LitJTMLDataset(Dataset):
                     'seg_label': seg_label,
                     'full_image': full_image,
                     'image_no_transform': image_no_transform}
+        
+        # CWDE: hotfix for compatibility with segmentation code that just uses 'label'
+        sample['label'] = seg_label
 
         # * Return the sample
         return sample

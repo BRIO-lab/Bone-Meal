@@ -41,7 +41,8 @@ class Configuration:
             'IMG_CHANNELS': 1,      # Is this differnt from self.module['NUM_IMAGE_CHANNELS']
             'IMAGE_THRESHOLD': 0,
             'SUBSET_PIXELS': True,
-            'USE_ALBUMENTATIONS': False
+            'USE_ALBUMENTATIONS': True,
+            'NUM_KEY_POINTS' : 1,
         }
 
         self.datamodule = {
@@ -50,16 +51,18 @@ class Configuration:
             
             # Z. Curran:  '/home/curran.z/blue_zhe.jiang/curran.z/BM/images'
             # CWDE: "C:/Users/cwell/Documents/jtml_data/TPLO_Ten_Dogs_grids"
+            # CWDE: '/home/driggersellis.cw/jtml_data/TPLO_Ten_Dogs_grids/' 
             
-            'IMAGE_DIRECTORY': '/home/curran.z/blue_zhe.jiang/curran.z/BM/images',
+            'IMAGE_DIRECTORY': '/home/driggersellis.cw/jtml_data/TPLO_Ten_Dogs_grids/',
             # *** CHANGE THE CHECKPOINT PATH TO YOUR OWN FOR TESTING ***
             #'CKPT_FILE': 'path/to/ckpt/file.ckpt',  # used when loading model from a checkpoint
             # used when loading model from a checkpoint, such as in testing
             
             # Z. Curran : '/home/curran.z/blue_zhe.jiang/curran.z/BM/Bone-Meal/checkpoints/'
             # CWDE: "C:/Users/cwell/Documents/jtml_data/Checkpoints/"
+            # CWDE: '/home/driggersellis.cw/jtml_data/Bone-Meal/checkpoints/' 
             
-            'CKPT_FILE': '/home/curran.z/blue_zhe.jiang/curran.z/BM/Bone-Meal/checkpoints/' + self.init['WANDB_RUN_GROUP'] + self.init['MODEL_NAME'] + '.ckpt', 
+            'CKPT_FILE': '/home/driggersellis.cw/Bone-Meal/checkpoints/' + self.init['WANDB_RUN_GROUP'] + self.init['MODEL_NAME'] + '.ckpt', 
             'BATCH_SIZE': 4,
             'SHUFFLE': True,        # Only for training, for test and val this is set in the datamodule script to False
             'NUM_WORKERS': 4,   # This number seems fine for local but on HPG, we have so many cores that a number like 4 seems better.
@@ -78,9 +81,9 @@ class Configuration:
         # network params
         self.net = {
             # 'hrt_small', 'hrnet'
+            'BACKBONE': 'hrt_small', # the name of the backbone identified in backbone_selector. Currently have planned support for hrt and hrnet
             # 'seg_hrt', 'seg_hrnet'
-            'BACKBONE': 'hrnet', # the name of the backbone identified in backbone_selector. Currently have planned support for hrt and hrnet
-            'ARCHITECTURE' :'seg_hrnet', # name of the architecture_builder class file
+            'ARCHITECTURE' :'seg_hrt', # name of the architecture_builder class file
             'DATA_MODULE' : 'segmentation_data_module'
         }
         
