@@ -127,13 +127,14 @@ class Configuration:
         
         #TODO: add other params dicts for each loss function we have. Code will be extensible 
 
+        # Commented out transforms do not support keypoints
         self.transform = \
         A.Compose([
         A.RandomGamma(always_apply=False, p = 0.5,gamma_limit=(10,300)),
         A.ShiftScaleRotate(always_apply = False, p = 0.5,shift_limit=(-0.06, 0.06), scale_limit=(-0.1, 0.1), rotate_limit=(-180,180), interpolation=0, border_mode=0, value=(0, 0, 0)),
         A.Blur(always_apply=False, blur_limit=(3, 10), p=0.2),
         A.Flip(always_apply=False, p=0.5),
-        A.ElasticTransform(always_apply=False, p=0.85, alpha=0.5, sigma=150, alpha_affine=50.0, interpolation=0, border_mode=0, value=(0, 0, 0), mask_value=None, approximate=False),
+        # A.ElasticTransform(always_apply=False, p=0.85, alpha=0.5, sigma=150, alpha_affine=50.0, interpolation=0, border_mode=0, value=(0, 0, 0), mask_value=None, approximate=False),
         A.InvertImg(always_apply=False, p=0.5),
         A.CoarseDropout(always_apply = False, p = 0.25, min_holes = 1, max_holes = 100, min_height = 25, max_height=25),
         A.MultiplicativeNoise(always_apply=False, p=0.25, multiplier=(0.1, 2), per_channel=True, elementwise=True)
