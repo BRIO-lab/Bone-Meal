@@ -9,10 +9,10 @@ from BPR.mmseg.ops import resize
 from .. import builder
 from ..builder import SEGMENTORS
 from .encoder_decoder import EncoderDecoder
-
+import pytorch_lightning as pl
 
 @SEGMENTORS.register_module()
-class EncoderDecoderRefine(EncoderDecoder):
+class EncoderDecoderRefine(EncoderDecoder,pl.LightningModule):
     def __init__(self,
                  backbone,
                  decode_head,
@@ -47,7 +47,9 @@ class EncoderDecoderRefine(EncoderDecoder):
             mode='bilinear',
             align_corners=self.align_corners)
         return out
-
+    def configure_optimizers(self):
+        optimizer = torch.optim.Adam(self.parameters(),lr=1e-3)
+        return optimizer
     def forward_train(self, img, img_metas, gt_semantic_seg, coarse_mask):
         """Forward function for training.
 

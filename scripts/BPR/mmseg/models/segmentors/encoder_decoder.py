@@ -7,10 +7,10 @@ from BPR.mmseg.ops import resize
 from .. import builder
 from ..builder import SEGMENTORS
 from .base import BaseSegmentor
-
+import pytorch_lightning as pl
 
 @SEGMENTORS.register_module()
-class EncoderDecoder(BaseSegmentor):
+class EncoderDecoder(BaseSegmentor,pl.LightningModule):
     """Encoder Decoder segmentors.
 
     EncoderDecoder typically consists of backbone, decode_head, auxiliary_head.
@@ -151,7 +151,6 @@ class EncoderDecoder(BaseSegmentor):
         """
 
         x = self.extract_feat(img)
-
         losses = dict()
 
         loss_decode = self._decode_head_forward_train(x, img_metas,
@@ -164,7 +163,16 @@ class EncoderDecoder(BaseSegmentor):
             losses.update(loss_aux)
 
         return losses
-
+    def training_step(self, train_batch, batch_idx):
+        training_batch, training_batch_labels = train_batch['image'], train_batch['label']
+        x = training_batch
+        print("Training batch is on device " + str(x.get_device()))         # testing line
+        training_output = self.forward_train(self,img=x,gt_semantic_seg=training_batch_labels)
+        #self.log('exp_train/loss', loss, on_step=True)
+        #self.wandb_run.log('train/loss', loss, on_step=True)
+        #self.wandb_run.log({'train/loss': loss})
+        #self.log(name="train/loss", value=loss)
+        return training_output
     # TODO refactor
     def slide_inference(self, img, img_meta, rescale):
         """Inference by sliding-window with overlap.
