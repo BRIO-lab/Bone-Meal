@@ -89,6 +89,8 @@ class LitJTMLDataset(Dataset):
         else:
             raise Exception('Incorrect model type! Must be either \'fem\' or \'tib\'.')
 
+        # save raw kp's for debug purposes
+        kp_raw = kp_label
         kp_label = kp_label[2:-2]
         kp_label = kp_label.split(']' + os.linesep + ' [')
         kp_label = [np.array([float(x) for x in list(filter(None, kp.split(' ')))]) for kp in kp_label]
@@ -122,8 +124,10 @@ class LitJTMLDataset(Dataset):
         seg_label = torch.FloatTensor(seg_label[None, :, :])
         #kp_label = torch.FloatTensor(kp_label.reshape(-1))      # Reshape to 1D array so that it's 2*num_keypoints long
         kp_label = torch.FloatTensor(kp_label)          # kp_label is of shape (num_keypoints, 2)
+        
 
-        assert (kp_label.shape[0], kp_label.shape[1]) == (self.num_points, 2), "Keypoint label shape is incorrect!"
+        # CWDE: Removed so that segmentation can occur without implementing the KP data fully
+        # assert (kp_label.shape[0], kp_label.shape[1]) == (self.num_points, 2), "Keypoint label shape is incorrect!"
 
         #print("kp_label.shape:")
         #print(kp_label.shape)
@@ -138,6 +142,7 @@ class LitJTMLDataset(Dataset):
         
         # CWDE: hotfix for compatibility with segmentation code that just uses 'label'
         sample['label'] = seg_label
+        sample['kp_raw'] = kp_raw
 
         # * Return the sample
         return sample
