@@ -12,11 +12,14 @@ class Configuration:
             'PROJECT_NAME': 'Segmentation Trial',
             'MODEL_NAME': 'MyModel',
             'RUN_NAME': time.strftime('%Y-%m-%d-%H-%M-%S'),
-            'WANDB_RUN_GROUP': 'miller-lab',
-            'FAST_DEV_RUN': False,  # Runs inputted batches (True->1) and disables logging and some callbacks
+            'WANDB_RUN_GROUP': 'Local',
+            'FAST_DEV_RUN': True,  # Runs inputted batches (True->1) and disables logging and some callbacks
             'MAX_EPOCHS': 25,
             'MAX_STEPS': -1,    # -1 means it will do all steps and be limited by epochs
-            'STRATEGY': None    # This is the training strategy. Should be 'ddp' for multi-GPU (like HPG)
+            'STRATEGY': None,    # This is the training strategy. Should be 'ddp' for multi-GPU (like HPG)
+            'PATIENCE': 3,     # Stop training after this many validation checks without improvement
+            'STOPPING_THRESHOLD': None,     # Stop training when val loss reaches this threshold
+            'VAL_CHECK_INTERVAL': 1     # Perform validation check after this many epochs
         }
         self.etl = {
             'RAW_DATA_FILE': -1,    # -1 means it will create a full data csv from the image directory, using all images in the image directory
@@ -49,20 +52,28 @@ class Configuration:
             # *** CHANGE THE IMAGE DIRECTORY TO YOUR OWN ***
             #'IMAGE_DIRECTORY': '/media/sasank/LinuxStorage/Dropbox (UFL)/Canine Kinematics Data/TPLO_Ten_Dogs_grids',
             
-            # Z. Curran:  '/home/curran.z/blue_zhe.jiang/curran.z/BM/images'
+            # Z. Curran:  '/blue/banks/TPLO_Ten_Dogs_grids'
             # CWDE: "C:/Users/cwell/Documents/jtml_data/TPLO_Ten_Dogs_grids"
             # CWDE: '/home/driggersellis.cw/jtml_data/TPLO_Ten_Dogs_grids/' 
             
+<<<<<<< Updated upstream
             'IMAGE_DIRECTORY': 'C:/Users/cwell/Documents/jtml_data/TPLO_Ten_Dogs_grids',
+=======
+            'IMAGE_DIRECTORY': '/blue/banks/TPLO_Ten_Dogs_grids',
+>>>>>>> Stashed changes
             # *** CHANGE THE CHECKPOINT PATH TO YOUR OWN FOR TESTING ***
             #'CKPT_FILE': 'path/to/ckpt/file.ckpt',  # used when loading model from a checkpoint
             # used when loading model from a checkpoint, such as in testing
             
-            # Z. Curran : '/home/curran.z/blue_zhe.jiang/curran.z/BM/Bone-Meal/checkpoints/'
+            # Z. Curran : '/blue/banks/curran.z/Bone-Meal/checkpoints/'
             # CWDE: "C:/Users/cwell/Documents/jtml_data/Checkpoints/"
             # CWDE: '/home/driggersellis.cw/jtml_data/Bone-Meal/checkpoints/' 
             
+<<<<<<< Updated upstream
             'CKPT_FILE': 'C:/Users/cwell/Documents/jtml_data/Checkpoints/' + self.init['WANDB_RUN_GROUP'] + self.init['MODEL_NAME'] + '.ckpt', 
+=======
+            'CKPT_FILE': '/blue/banks/curran.z/Bone-Meal/checkpoints/' + self.init['WANDB_RUN_GROUP'] + self.init['MODEL_NAME'] + '.ckpt', 
+>>>>>>> Stashed changes
             'BATCH_SIZE': 4,
             'SHUFFLE': True,        # Only for training, for test and val this is set in the datamodule script to False
             'NUM_WORKERS': 4,   # This number seems fine for local but on HPG, we have so many cores that a number like 4 seems better.
@@ -70,6 +81,7 @@ class Configuration:
             #'SUBSET_PIXELS': True,
             'USE_NAIVE_TEST_SET': False
         }
+    
 
         # hyperparameters for training
         self.hparams = {

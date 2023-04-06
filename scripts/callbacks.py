@@ -101,6 +101,7 @@ class JTMLCallback(Callback):
             self.min_val_loss = outputs.item()
         
         self.wandb_run.log({'validation/loss': outputs.item()})
+        self.log("val_loss", outputs.item())
 
         val_outputs = pl_module.forward(batch['image'])
 
@@ -143,6 +144,8 @@ class JTMLCallback(Callback):
                 })}
             )
         return super().on_validation_batch_end(trainer, pl_module, outputs, batch, batch_idx, dataloader_idx)
+
+
 
     """
     *********************** Test ***********************
