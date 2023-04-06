@@ -25,6 +25,8 @@ from build import build_model
 from lib.models.datamodules.datamodule_selector import DataModuleSelector
 from lib.models.nets.architecture_selector import ArchitectureSelector
 
+from pytorch_lightning.callbacks.early_stopping import EarlyStopping
+
 """
 The main function contains the neural network-related code.
 """
@@ -57,13 +59,13 @@ def main(config, wandb_run):
         auto_select_gpus=True,  # helps use all GPUs, not quite understood...
         #logger=wandb_logger,   # tried to use a WandbLogger object. Hasn't worked...
         default_root_dir=os.getcwd(),
-        callbacks=[JTMLCallback(config, wandb_run)],    # pass in the callbacks we want
+        callbacks=[JTMLCallback(config, wandb_run), EarlyStopping(monitor="val_loss", mode="min", patience=config.init['PATIENCE'], stopping_threshold=config.init['STOPPING_THRESHOLD'])],    # pass in the callbacks we want
         #callbacks=[JTMLCallback(config, wandb_run), save_best_val_checkpoint_callback],
         fast_dev_run=config.init['FAST_DEV_RUN'],
         max_epochs=config.init['MAX_EPOCHS'],
         max_steps=config.init['MAX_STEPS'],
         strategy=config.init['STRATEGY'],
-        check_val_every_n_epoch=5)
+        check_val_every_n_epoch=config.init['VAL_CHECK_INTERVAL'])
         #val_check_interval=config.init['MAX_STEPS'])
     
     # This is the step where everything happens.
