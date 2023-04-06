@@ -60,9 +60,9 @@ class Configuration:
             
             # Z. Curran : '/home/curran.z/blue_zhe.jiang/curran.z/BM/Bone-Meal/checkpoints/'
             # CWDE: "C:/Users/cwell/Documents/jtml_data/Checkpoints/"
-            # CWDE: '/home/driggersellis.cw/jtml_data/Bone-Meal/checkpoints/' 
+            # CWDE: '/home/driggersellis.cw/Bone-Meal/checkpoints/' 
             
-            'CKPT_FILE': '/home/driggersellis.cw/jtml_data/Bone-Meal/checkpoints/' + self.init['WANDB_RUN_GROUP'] + self.init['MODEL_NAME'] + '.ckpt', 
+            'CKPT_FILE': '/home/driggersellis.cw/Bone-Meal/checkpoints/' + self.init['WANDB_RUN_GROUP'] + self.init['MODEL_NAME'] + '.ckpt', 
             'BATCH_SIZE': 4,
             'SHUFFLE': False,        # Only for training, for test and val this is set in the datamodule script to False
             'NUM_WORKERS': 4,   # This number seems fine for local but on HPG, we have so many cores that a number like 4 seems better.
@@ -81,9 +81,9 @@ class Configuration:
         # network params
         self.net = {
             # 'hrt_small', 'hrnet'
-            'BACKBONE': 'hrnet', # the name of the backbone identified in backbone_selector. Currently have planned support for hrt and hrnet
+            'BACKBONE': 'hrt_small', # the name of the backbone identified in backbone_selector. Currently have planned support for hrt and hrnet
             # 'seg_hrt', 'seg_hrnet'
-            'ARCHITECTURE' :'seg_hrnet', # name of the architecture_builder class file
+            'ARCHITECTURE' :'seg_hrt', # name of the architecture_builder class file
             'DATA_MODULE' : 'segmentation_data_module'
         }
         
@@ -133,14 +133,14 @@ class Configuration:
         # Commented out transforms do not support keypoints
         self.transform = \
         A.Compose([
-        A.RandomGamma(always_apply=False, p = 0.5,gamma_limit=(10,300)),
+        # A.RandomGamma(always_apply=False, p = 0.5,gamma_limit=(10,300)),
         A.ShiftScaleRotate(always_apply = False, p = 0.5,shift_limit=(-0.06, 0.06), scale_limit=(-0.1, 0.1), rotate_limit=(-180,180), interpolation=0, border_mode=0, value=(0, 0, 0)),
-        A.Blur(always_apply=False, blur_limit=(3, 10), p=0.2),
+        # A.Blur(always_apply=False, blur_limit=(3, 10), p=0.2),
         A.Flip(always_apply=False, p=0.5),
         # A.ElasticTransform(always_apply=False, p=0.85, alpha=0.5, sigma=150, alpha_affine=50.0, interpolation=0, border_mode=0, value=(0, 0, 0), mask_value=None, approximate=False),
-        A.InvertImg(always_apply=False, p=0.5),
+        # A.InvertImg(always_apply=False, p=0.5),
         # A.CoarseDropout(always_apply = False, p = 0.25, min_holes = 1, max_holes = 100, min_height = 25, max_height=25),
-        A.MultiplicativeNoise(always_apply=False, p=0.25, multiplier=(0.1, 2), per_channel=True, elementwise=True)
+        # A.MultiplicativeNoise(always_apply=False, p=0.25, multiplier=(0.1, 2), per_channel=True, elementwise=True)
     ],
     keypoint_params=A.KeypointParams(format='xy', remove_invisible=False),
     p=0.85)
