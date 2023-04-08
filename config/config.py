@@ -13,12 +13,12 @@ class Configuration:
             'MODEL_NAME': 'MyModel',
             'RUN_NAME': time.strftime('%Y-%m-%d-%H-%M-%S'),
             'WANDB_RUN_GROUP': 'Local',
-            'FAST_DEV_RUN': True,  # Runs inputted batches (True->1) and disables logging and some callbacks
+            'FAST_DEV_RUN': False,  # Runs inputted batches (True->1) and disables logging and some callbacks
             'MAX_EPOCHS': 25,
             'MAX_STEPS': -1,    # -1 means it will do all steps and be limited by epochs
             'STRATEGY': None,    # This is the training strategy. Should be 'ddp' for multi-GPU (like HPG)
             'PATIENCE': 3,     # Stop training after this many validation checks without improvement
-            'STOPPING_THRESHOLD': None,     # Stop training when val loss reaches this threshold
+            'STOPPING_THRESHOLD': 0.01,     # Stop training when val loss reaches this threshold
             'VAL_CHECK_INTERVAL': 1     # Perform validation check after this many epochs
         }
         self.etl = {
