@@ -86,9 +86,9 @@ class Configuration:
         # network params
         self.net = {
             # 'hrt_small', 'hrnet'
-            'BACKBONE': 'hrt_small', # the name of the backbone identified in backbone_selector. Currently have planned support for hrt and hrnet
+            'BACKBONE': 'hrnet', # the name of the backbone identified in backbone_selector. Currently have planned support for hrt and hrnet
             # 'seg_hrt', 'seg_hrnet'
-            'ARCHITECTURE' :'seg_hrt', # name of the architecture_builder class file
+            'ARCHITECTURE' :'seg_hrnet', # name of the architecture_builder class file
             'DATA_MODULE' : 'segmentation_data_module'
         }
         
