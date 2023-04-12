@@ -51,11 +51,10 @@ def main(config, wandb_run):
     save_best_val_checkpoint_callback = ModelCheckpoint(monitor='val_loss',
                                                         mode='min',
                                                         dirpath=CKPT_DIR,
-                                                        filename=wandb_run.name+'_best.ckpt')
+                                                        filename=config.init['WANDB_RUN_GROUP'] + config.init['MODEL_NAME'] +'_best.ckpt')
     
     early_stopping = EarlyStopping(monitor="val_loss", 
                                    mode="min", 
-                                   patience=config.init['PATIENCE'], 
                                    stopping_threshold=config.init['STOPPING_THRESHOLD'])
     
     jtml_callback = JTMLCallback(config, wandb_run)
