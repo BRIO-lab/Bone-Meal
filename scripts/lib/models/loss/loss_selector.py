@@ -4,6 +4,9 @@ import os
 import torch.nn
 from importlib import import_module
 
+"""
+LossSelector allows for the selection of a loss function by architectures/modules
+"""
 class LossSelector(object):
     def __init__(self, config, module_dict):
         self.config = config

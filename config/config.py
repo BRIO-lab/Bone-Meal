@@ -27,8 +27,8 @@ class Configuration:
             'DATA_DIR': "data",
             'VAL_SIZE':  0.1,       # looks sus
             'TEST_SIZE': 0.1,       # I'm not sure these two mean what we think
-                                    #'random_state': np.random.randint(1,50)
-                                    # HHG2TG lol; deterministic to aid reproducibility
+                                    # 'random_state': np.random.randint(1,50)
+                                    # deterministic to aid reproducibility
             'RANDOM_STATE': 42,
 
             'CUSTOM_TEST_SET': False,
@@ -57,7 +57,7 @@ class Configuration:
             # CWDE: "C:/Users/cwell/Documents/jtml_data/TPLO_Ten_Dogs_grids"
             # CWDE: '/home/driggersellis.cw/jtml_data/TPLO_Ten_Dogs_grids/' 
             
-            'IMAGE_DIRECTORY': '/home/driggersellis.cw/jtml_data/TPLO_Ten_Dogs_grids/',
+            'IMAGE_DIRECTORY': 'C:/Users/cwell/Documents/jtml_data/TPLO_Ten_Dogs_grids',
 
             # *** CHANGE THE CHECKPOINT PATH TO YOUR OWN FOR TESTING ***
             #'CKPT_FILE': 'path/to/ckpt/file.ckpt',  # used when loading model from a checkpoint
@@ -67,7 +67,7 @@ class Configuration:
             # CWDE: "C:/Users/cwell/Documents/jtml_data/Checkpoints/"
             # CWDE: '/home/driggersellis.cw/Bone-Meal/checkpoints/' 
             
-            'CKPT_FILE': '/home/driggersellis.cw/Bone-Meal/checkpoints/' + self.init['WANDB_RUN_GROUP'] + self.init['MODEL_NAME'] + '.ckpt', 
+            'CKPT_FILE': 'C:/Users/cwell/Documents/Bone_Meal/checkpoints/' + self.init['WANDB_RUN_GROUP'] + self.init['MODEL_NAME'] + '.ckpt', 
             'BATCH_SIZE': 4,
             'SHUFFLE': False,       # Only for training, for test and val this is set in the datamodule script to False
             'NUM_WORKERS': 4,       # This number seems fine for local but on HPG, we have so many cores that a number like 4 seems better.
@@ -93,18 +93,16 @@ class Configuration:
             'DATA_MODULE' : 'segmentation_data_module' # Argument for the data_module_selector.
         }
         
-        # CWDE: PARAMS FOR BACKBONES (Format: self.[name of backbone in self.net] = { params dict })
+        # CWDE: PARAMS FOR ARCHITECTURES (Format: self.[name of architecture in self.net] = { params dict })
         
-        # These are essentially params for the hrnet backbone's SegmentationNetModule class
-        # They are an exception to the format established in the comment above, because the dictionary was included in
-        # previous source from BRIO-Lab/LightningSegmentation.
+        # These are essentially params for the hrnet architecture's SegmentationNetModule class
         self.segmentation_net_module = {
                 'NUM_KEY_POINTS' : 1,
                 'NUM_IMG_CHANNELS': self.dataset['IMG_CHANNELS'],
                 'LOSS' : 'torch_nn_bce_with_logits_loss'
         }
         
-        # Params for HRT's segmentation_net_module. Defaults used from HRT's Small config. Future work should include adding support for these.
+        # Params for HRT's segmentation_net_module. Defaults used from HRT's Small config. Future work should include adding support for other configs.
         self.hrt_segmentation_net = {
                 'MODEL_CONFIG' : 'hrt_small',
                 'LOSS' : 'torch_nn_bce_loss'

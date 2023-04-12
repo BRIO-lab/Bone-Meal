@@ -29,7 +29,7 @@ class SegmentationNetModule(pl.LightningModule):
         # CWDE:
         loss_selector = LossSelector(config = self.config, module_dict = self.config.segmentation_net_module)
         self.loss_fn = loss_selector.get_loss()
-        #print(self.pose_hrnet.get_device())
+        
 
     def forward(self, x):
         """This performs a forward pass on the dataset
