@@ -6,12 +6,11 @@ import pytorch_lightning as pl
 import wandb
 
 from lib.models.backbones.hrnet.pose_hrnet_modded_in_notebook import PoseHighResolutionNet
-# CWDE: add import for loss selector. See alteration to the class constructor
+# CWDE: add import for loss selector. See class constructor
 from lib.models.loss.loss_selector import LossSelector
 
 class SegmentationNetModule(pl.LightningModule):
     def __init__(self, config, wandb_run, learning_rate=1e-3):
-    #def __init__(self, pose_hrnet, learning_rate=1e-3):
         super().__init__()
         self.save_hyperparameters("learning_rate")
         self.config = config    

@@ -17,7 +17,6 @@ class Configuration:
             'MAX_EPOCHS': 25,       # Maximum number of epochs to train (May stop before according to other criteria)
             'MAX_STEPS': -1,        # -1 means it will do all steps and be limited by epochs
             'STRATEGY': None,       # This is the training strategy. Should be 'ddp' for multi-GPU (like HPG)
-            'PATIENCE': 3,          # Stop training after this many validation checks without improvement
             'STOPPING_THRESHOLD': 0.005,     # Stop training when val loss reaches this threshold
             'VAL_CHECK_INTERVAL': 1 # Perform validation check after this many epochs
         }
