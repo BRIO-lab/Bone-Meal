@@ -16,18 +16,22 @@ class SegmentationNetModule(pl.LightningModule):
         super().__init__()
         self.save_hyperparameters("learning_rate")
         self.config = config    
-        self.pose_hrt = BackboneSelector(config).get_backbone()
+        self.pose_hrt = BackboneSelector(config).get_backbone()                                  # CWDE: Possible to hardcode this to be HRT_SMALL or some other HRT config
         print("Pose HRT is on device " + str(next(self.pose_hrt.parameters()).get_device()))     # testing line
         print("Is Pose HRT on GPU? " + str(next(self.pose_hrt.parameters()).is_cuda))            # testing line
+        
         self.pose_hrt.to(device='cuda', dtype=torch.float32)                          # added recently and may fix a lot
         # *** IF the above line causes an error because you do not have CUDA, then just comment it out and the model should run, albeit on the CPU ***
+        
         print("Pose HRT is on device " + str(next(self.pose_hrt.parameters()).get_device()))     # testing line
         print("Is Pose HRT on GPU? " + str(next(self.pose_hrt.parameters()).is_cuda))            # testing line
         
         self.wandb_run = wandb_run
         self.loss_fn = LossSelector(config = self.config, module_dict = config.hrt_segmentation_net).get_loss()
+        
         self.loss_fn.to(device='cuda', dtype=torch.float32)
-
+        # *** IF the above line causes an error because you do not have CUDA, then just comment it out and the model should run, albeit on the CPU ***
+        
     def forward(self, x):
         """This performs a forward pass on the dataset
 
