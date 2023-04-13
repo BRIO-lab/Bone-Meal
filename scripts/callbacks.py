@@ -117,17 +117,22 @@ class JTMLCallback(Callback):
             # Inputs
             wandb_input = wandb.Image(input_image, caption=img_name)
             # TODO: Should I make this 'validation/epoch_idx_' + epoch_idx + '/input_image' ?
-            self.wandb_run.log({'validation/input_image': wandb_input})
+            # CWDE: commented out to save space on hpg. Consider parameterizing the decision to log this in the future.
+            # self.wandb_run.log({'validation/input_image': wandb_input})
             
             # Labels
             wandb_label = wandb.Image(label_image, caption=img_name)
-            self.wandb_run.log({'validation/input_label': wandb_label})
+            # CWDE: commented out to save space on hpg. Consider parameterizing the decision to log this in the future.
+            # self.wandb_run.log({'validation/input_label': wandb_label})
             
             # Predictions
             wandb_output = wandb.Image(output_image, caption=img_name)
-            self.wandb_run.log({'validation/output_image': wandb_output})
+            # CWDE: commented out to save space on hpg. Consider parameterizing the decision to log this in the future.
+            # self.wandb_run.log({'validation/output_image': wandb_output})
             
             # Overlay Image
+            # CWDE: commented out to save space on hpg. Consider parameterizing the decision to log this in the future.
+            '''
             self.wandb_run.log(
                 {'validation/overlay': wandb.Image(input_image,
                 caption=img_name,
@@ -143,6 +148,7 @@ class JTMLCallback(Callback):
                     }
                 })}
             )
+            '''
         return super().on_validation_batch_end(trainer, pl_module, outputs, batch, batch_idx, dataloader_idx)
 
 

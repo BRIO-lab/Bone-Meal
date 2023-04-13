@@ -14,10 +14,10 @@ class Configuration:
             'RUN_NAME': time.strftime('%Y-%m-%d-%H-%M-%S'),
             'WANDB_RUN_GROUP': 'Local',
             'FAST_DEV_RUN': False,  # Runs inputted batches (True --> 1) and disables logging and some callbacks
-            'MAX_EPOCHS': 25,       # Maximum number of epochs to train (May stop before according to other criteria)
+            'MAX_EPOCHS': 1,       # Maximum number of epochs to train (May stop before according to other criteria)
             'MAX_STEPS': -1,        # -1 means it will do all steps and be limited by epochs
             'STRATEGY': None,       # This is the training strategy. Should be 'ddp' for multi-GPU (like HPG)
-            'STOPPING_THRESHOLD': 0.005,     # Stop training when val loss reaches this threshold
+            'STOPPING_THRESHOLD': None,# Stop training when val loss reaches this threshold
             'VAL_CHECK_INTERVAL': 1 # Perform validation check after this many epochs
         }
         self.etl = {
@@ -66,7 +66,7 @@ class Configuration:
             # CWDE: "C:/Users/cwell/Documents/jtml_data/Checkpoints/"
             # CWDE: '/home/driggersellis.cw/Bone-Meal/checkpoints/' 
             
-            'CKPT_FILE': '/home/driggersellis.cw/Bone-Meal/checkpoints/' + self.init['WANDB_RUN_GROUP'] + self.init['MODEL_NAME'] + '.ckpt', 
+            'CKPT_FILE': '/home/driggersellis.cw/Bone-Meal/checkpoints/' + self.init['WANDB_RUN_GROUP'] + self.init['MODEL_NAME'] + '_best.ckpt', 
             'BATCH_SIZE': 4,
             'SHUFFLE': False,       # Only for training, for test and val this is set in the datamodule script to False
             'NUM_WORKERS': 4,       # This number seems fine for local but on HPG, we have so many cores that a number like 4 seems better.

@@ -74,8 +74,8 @@ class SegmentationNetModule(pl.LightningModule):
         #
         loss = self.loss_fn(val_output, val_batch_labels)
         self.wandb_run.log({'validation/loss': loss})
-        image = wandb.Image(val_output[1], caption='Validation output')
-        self.wandb_run.log({'val_output': image})
+        # image = wandb.Image(val_output[1], caption='Validation output')
+        # self.wandb_run.log({'val_output': image})
         return loss
 
     def test_step(self, test_batch, batch_idx):

@@ -44,26 +44,6 @@ class LitJTMLDataset(Dataset):
         
     
     
-    #def __init__(self, config, dataset, img_dir):
-
-        """
-        # image check
-        #print('Image directory: ' + self.config.data_constants["IMAGE_DIRECTORY"])
-        for idx in range(0,len(self.images)):
-            if os.path.isfile(self.img_dir + '/' + self.images[idx]) ==False:
-                raise Exception('Error, cannot find file: ' + self.images[idx])
-        
-        #print(self.config.data_constants['MODEL_TYPE'])
-        for i,j in enumerate(self.dataset[0,:]):
-            #if j == self.config.data_constants['MODEL_TYPE']:
-            if j == 'fem':
-                self.labels = self.dataset[1:,i]
-        
-        # label check
-        for idx in range(0,len(self.labels)):
-            if os.path.isfile(self.img_dir + '/' + self.labels[idx]) ==False:
-                raise Exception('Error, cannot find file: ' + self.labels[idx])
-        """
     
     def __len__(self):
         return len(self.data)
