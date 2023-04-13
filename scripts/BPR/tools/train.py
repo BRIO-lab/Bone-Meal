@@ -72,7 +72,6 @@ def main(config, wandb_run):
     args = parse_args()
 
     cfg = Config.fromfile(os.getcwd()+'/BPR/configs/bpr/hrnet18s_128.py')
-    print(cfg)
     if args.options is not None:
         cfg.merge_from_dict(args.options)
     # set cudnn_benchmark

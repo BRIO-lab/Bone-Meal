@@ -272,7 +272,7 @@ class HRNet(nn.Module):
 
     def __init__(self,
                  extra,
-                 in_channels=3,
+                 in_channels=1,
                  conv_cfg=None,
                  norm_cfg=dict(type='BN', requires_grad=True),
                  norm_eval=False,

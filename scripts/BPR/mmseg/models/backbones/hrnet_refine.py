@@ -82,9 +82,11 @@ class HRNetRefine(HRNet):
 
     def forward(self, x):
         """Forward function."""
+        print(x.size())
         img = x[:,:3,...]
-        mask = x[:,3:,...]
-
+        mask = x[:,:3,...]
+        print(img.size())
+        print(mask.size())
         x = self.conv1(img) + self.conv_mask(mask)
         x = self.norm1(x)
         x = self.relu(x)

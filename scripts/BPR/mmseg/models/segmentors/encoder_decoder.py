@@ -163,11 +163,41 @@ class EncoderDecoder(BaseSegmentor,pl.LightningModule):
             losses.update(loss_aux)
 
         return losses
+    def configure_optimizers(self):
+        optimizer = torch.optim.Adam(self.parameters(),lr=1e-3)
+        return optimizer
     def training_step(self, train_batch, batch_idx):
         training_batch, training_batch_labels = train_batch['image'], train_batch['label']
         x = training_batch
+
         print("Training batch is on device " + str(x.get_device()))         # testing line
-        training_output = self.forward_train(self,img=x,gt_semantic_seg=training_batch_labels)
+        img_norm_cfg = dict(
+            mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
+        crop_size = (128, 128)
+        img_metas= [
+    dict(type='LoadImageFromFile'),
+    dict(type='LoadAnnotations'),
+    dict(type='Resize', img_scale=crop_size, ratio_range=(1.0, 1.0)),
+    dict(type='RandomFlip', flip_ratio=0.5),
+    dict(type='PhotoMetricDistortion'),
+    dict(type='Normalize', **img_norm_cfg),
+    dict(type='DefaultFormatBundle'),
+    dict(type='Collect', keys=['img', 'gt_semantic_seg']),
+]
+        training_output=self.forward_train(img=x,img_metas=img_metas,gt_semantic_seg=training_batch_labels,coarse_mask=training_batch_labels)
+        # for batch,batch_labels in zip(x,training_batch_labels):
+        #     temp2=0
+        #     for images,labels in zip(batch,batch_labels):
+        #         temp=0
+        #         for img,label in zip(images,labels):
+        #             print(img.cpu())
+        #             print(label)
+        #             loss = self.forward_train(self, img=img.cpu(), img_metas=img_metas,
+        #                                          gt_semantic_seg=label)
+        #             temp+=loss
+        #         training_output+=temp/len(images)
+        #     training_output+=temp2/len(batch)
+        # training_output=training_output/len(x)
         #self.log('exp_train/loss', loss, on_step=True)
         #self.wandb_run.log('train/loss', loss, on_step=True)
         #self.wandb_run.log({'train/loss': loss})
