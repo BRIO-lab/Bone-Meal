@@ -47,14 +47,11 @@ def main(config, wandb_run):
     """
     Construct callbacks 
     """
-    # This is a callback that should help us with stopping validation when it's time but isn't working.
     save_best_val_checkpoint_callback = ModelCheckpoint(monitor='val_loss',
                                                         mode='min',
                                                         dirpath=CKPT_DIR,
+                                                        save_top_k = config.init['SAVE_TOP_K'],
                                                         filename=config.init['WANDB_RUN_GROUP'] + config.init['MODEL_NAME'] +'_best')
-    
-    early_stopping = EarlyStopping(monitor="val_loss",
-                                   stopping_threshold=config.init['STOPPING_THRESHOLD'])
     
     jtml_callback = JTMLCallback(config, wandb_run)
     
@@ -71,7 +68,7 @@ def main(config, wandb_run):
         auto_select_gpus=True,  # helps use all GPUs, not quite understood...
         #logger=wandb_logger,   # tried to use a WandbLogger object. Hasn't worked...
         default_root_dir=os.getcwd(),
-        callbacks=[jtml_callback, early_stopping, save_best_val_checkpoint_callback],    # pass in the callbacks we want
+        callbacks=[jtml_callback, save_best_val_checkpoint_callback],    # pass in the callbacks we want
         fast_dev_run=config.init['FAST_DEV_RUN'],
         max_epochs=config.init['MAX_EPOCHS'],
         max_steps=config.init['MAX_STEPS'],
@@ -89,7 +86,6 @@ def main(config, wandb_run):
     """
     Save final checkpoint
     """
-    # TODO: Are the trainer and Wandb doing the same thing/overwriting the checkpoint?
     #Save model using .ckpt file format. This includes .pth info and other (hparams) info.
     trainer.save_checkpoint(CKPT_DIR + config.init['WANDB_RUN_GROUP'] + config.init['MODEL_NAME'] + '_final.ckpt')
     
@@ -129,10 +125,9 @@ if __name__ == '__main__':
         #dir='logs/'
         #save_dir='/logs/'
     )
-    #wandb_placeholder = wandb.init()
 
+    # WARNING: If you receive Errno 28 on hpg, this means that you are out of memory. You will need to cull local wandb files/ckpts to continue.
     main(config, wandb_run)
-    #main(config, wandb_placeholder)
 
     # Sync and close the Wandb logging. Good to have for DDP, I believe.
     wandb.finish()

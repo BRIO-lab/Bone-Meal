@@ -23,9 +23,7 @@ import os
 import time
 import wandb
 
-#torch.manual_seed(42) # haha HG2G
-
-# CWDE: 2-24-2023
+# CWDE:
 from lib.models.datamodules.datamodule_selector import DataModuleSelector
 
 """
@@ -33,17 +31,19 @@ The main function contains the neural network-related code.
 """
 
 def main(config, wandb_run):
-    # The DataModule object loads the data from CSVs, calls the JTMLDataset to get data, and creates the dataloaders.
-    # CWDE : 2-24-2023
+    # CWDE : The DataModule object loads the data from CSVs, calls the JTMLDataset to get data, and creates the dataloaders.
     data_selector = DataModuleSelector(config = config)
     data_module = data_selector.get_datamodule()
     
     # This is the real architecture we're using. It is vanilla PyTorch - no Lightning.
-    #pose_hrnet = PoseHighResolutionNet(num_key_points=1, num_image_channels=config.module['NUM_IMAGE_CHANNELS'])
-    #model = MyLightningModule(pose_hrnet=pose_hrnet, wandb_run=wandb_run).load_from_checkpoint(CKPT_DIR + config.init['RUN_NAME'] + '.ckpt')
+
+    # pose_hrnet = PoseHighResolutionNet(num_key_points=1, num_image_channels=config.module['NUM_IMAGE_CHANNELS'])
+    # model = MyLightningModule(pose_hrnet=pose_hrnet, wandb_run=wandb_run).load_from_checkpoint(CKPT_DIR + config.init['RUN_NAME'] + '.ckpt')
+    
     # This is our LightningModule, which where the architecture is supposed to go.
     # Since we are using an architecure written in PyTorch (PoseHRNet), we feed that architecture in.
     # We also pass our wandb_run object to we can log.
+
     if config.datamodule['CKPT_FILE'] != None:
         if config.net['ARCHITECTURE'] == 'seg_hrt':
             model = HRTSegmentationNetModule.load_from_checkpoint(config.datamodule['CKPT_FILE'], config = config, wandb_run = wandb_run, strict=False)
@@ -52,38 +52,24 @@ def main(config, wandb_run):
             model = HRNetSegmentationNetModule.load_from_checkpoint(config.datamodule['CKPT_FILE'], config = config, wandb_run = wandb_run, strict=False)
             print('Checkpoint file loaded from ' + config.datamodule['CKPT_FILE'])
     elif config.datamodule['CKPT_FILE'] == None:
-      #  try:
-      #      model = SegmentationNetModule.load_from_checkpoint(CKPT_DIR + config.init['WANDB_RUN_GROUP'] + '/' + config.init['MODEL_NAME'] +'.ckpt', pose_hrnet=pose_hrnet, wandb_run=wandb_run)
-      #  except:
-      #      print("No checkpoint .ckpt file in default location at " + CKPT_DIR + config.init['WANDB_RUN_GROUP'] + '/' + config.init['MODEL_NAME'] +'.ckpt')
         raise NotImplementedError("There is no .ckpt file specified in config's datamodule dict.")
-    #model = MyLightningModule(pose_hrnet=pose_hrnet, wandb_run=wandb_run)
-    #model = model.load_from_checkpoint(CKPT_DIR + config.init['RUN_NAME'] + '.ckpt')
-
-    """
-    save_best_val_checkpoint_callback = ModelCheckpoint(monitor='validation/loss',
-                                                        mode='min',
-                                                        dirpath='checkpoints/',
-                                                        filename=wandb_run.name)
-    """
 
     # Our trainer object contains a lot of important info.
     trainer = pl.Trainer(
         # If the below line gives an error because you don't have a GPU, then comment it out and uncomment the line after it which uses the CPU.
-        accelerator='gpu',
-        # accelerator='cpu',
-        devices=-1,     # use all available devices (GPUs)
+        accelerator='gpu',  # accelerator='cpu',
+        devices=-1,         # use all available devices (GPUs)
         # Probably comment out the below line if you're using your CPU.
         auto_select_gpus=True,  # helps use all GPUs, not quite understood...
-        #logger=wandb_logger,
         default_root_dir=os.getcwd(),
         callbacks=[JTMLCallback(config, wandb_run)],    # pass in the callbacks we want
-        #callbacks=[save_best_val_checkpoint_callback],
         fast_dev_run=config.init['FAST_DEV_RUN'],
         max_epochs=config.init['MAX_EPOCHS'],
         max_steps=config.init['MAX_STEPS'],
         strategy=config.init['STRATEGY'])
+
     # This is the step where everything happens.
+    # WARNING: If you receive Errno 28 on hpg, this means that you are out of memory. You will need to cull local wandb files/ckpts to continue.
     trainer.test(model, data_module)
 
 if __name__ == '__main__':
