@@ -14,7 +14,7 @@ class Configuration:
             'RUN_NAME': time.strftime('%Y-%m-%d-%H-%M-%S'),
             'WANDB_RUN_GROUP': 'Local',
             'FAST_DEV_RUN': False,  # Runs inputted batches (True --> 1) and disables logging and some callbacks
-            'MAX_EPOCHS': 25,       # Maximum number of epochs to train (May stop before according to other criteria)
+            'MAX_EPOCHS': 200,       # Maximum number of epochs to train (May stop before according to other criteria)
             'MAX_STEPS': -1,        # -1 means it will do all steps and be limited by epochs
             'STRATEGY': None,       # This is the training strategy. Should be 'ddp' for multi-GPU (like HPG)
             'SAVE_TOP_K': 1,        # The number of _best models to be saved by the ModelCheckpoint pl callback in fit.py
@@ -85,9 +85,9 @@ class Configuration:
         # CWDE: Network params. Currently possible values of certain fields are listed above them. Feel free to add more if you expand the Architecture Builder.
         self.net = {
             # 'hrt_small', 'hrnet'
-            'BACKBONE': 'hrt_small',    # the name of the backbone identified in backbone_selector. Currently we have support for hrt and hrnet
+            'BACKBONE': 'hrtnet',    # the name of the backbone identified in backbone_selector. Currently we have support for hrt and hrnet
             # 'seg_hrt', 'seg_hrnet'
-            'ARCHITECTURE' :'seg_hrt',  # name of the architecture_builder's class file such_and_such.py --> 'such_and_such'
+            'ARCHITECTURE' :'seg_hrnet',  # name of the architecture_builder's class file such_and_such.py --> 'such_and_such'
             # 'segmentation_data_module'
             'DATA_MODULE' : 'segmentation_data_module' # Argument for the data_module_selector.
         }
