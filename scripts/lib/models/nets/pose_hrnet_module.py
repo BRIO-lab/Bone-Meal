@@ -6,12 +6,11 @@ import pytorch_lightning as pl
 import wandb
 
 from lib.models.backbones.hrnet.pose_hrnet_modded_in_notebook import PoseHighResolutionNet
-# CWDE: add import for loss selector. See alteration to the class constructor
+# CWDE: add import for loss selector. See class constructor
 from lib.models.loss.loss_selector import LossSelector
 
 class SegmentationNetModule(pl.LightningModule):
     def __init__(self, config, wandb_run, learning_rate=1e-3):
-    #def __init__(self, pose_hrnet, learning_rate=1e-3):
         super().__init__()
         self.save_hyperparameters("learning_rate")
         self.config = config    
@@ -29,7 +28,7 @@ class SegmentationNetModule(pl.LightningModule):
         # CWDE:
         loss_selector = LossSelector(config = self.config, module_dict = self.config.segmentation_net_module)
         self.loss_fn = loss_selector.get_loss()
-        #print(self.pose_hrnet.get_device())
+        
 
     def forward(self, x):
         """This performs a forward pass on the dataset
@@ -69,8 +68,8 @@ class SegmentationNetModule(pl.LightningModule):
         #self.wandb_run.log('validation/loss', loss, on_step=True)
         self.wandb_run.log({'validation/loss': loss})
         #self.log('validation/loss', loss)
-        image = wandb.Image(val_output, caption='Validation output')
-        self.wandb_run.log({'val_output': image})
+        #image = wandb.Image(val_output[1], caption='Validation output')
+        #self.wandb_run.log({'val_output': image})
         return loss
 
     def test_step(self, test_batch, batch_idx):

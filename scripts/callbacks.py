@@ -11,6 +11,7 @@ import wandb
 import math
 from utility import run_metrics
 
+
 class JTMLCallback(Callback):
     def __init__(self, config, wandb_run) -> None:
         super().__init__()
@@ -101,6 +102,7 @@ class JTMLCallback(Callback):
             self.min_val_loss = outputs.item()
         
         self.wandb_run.log({'validation/loss': outputs.item()})
+        self.log("val_loss", outputs.item())
 
         val_outputs = pl_module.forward(batch['image'])
 
@@ -116,17 +118,22 @@ class JTMLCallback(Callback):
             # Inputs
             wandb_input = wandb.Image(input_image, caption=img_name)
             # TODO: Should I make this 'validation/epoch_idx_' + epoch_idx + '/input_image' ?
-            self.wandb_run.log({'validation/input_image': wandb_input})
+            # CWDE: commented out to save space on hpg. Consider parameterizing the decision to log this in the future.
+            # self.wandb_run.log({'validation/input_image': wandb_input})
             
             # Labels
             wandb_label = wandb.Image(label_image, caption=img_name)
-            self.wandb_run.log({'validation/input_label': wandb_label})
+            # CWDE: commented out to save space on hpg. Consider parameterizing the decision to log this in the future.
+            # self.wandb_run.log({'validation/input_label': wandb_label})
             
             # Predictions
             wandb_output = wandb.Image(output_image, caption=img_name)
-            self.wandb_run.log({'validation/output_image': wandb_output})
+            # CWDE: commented out to save space on hpg. Consider parameterizing the decision to log this in the future.
+            # self.wandb_run.log({'validation/output_image': wandb_output})
             
             # Overlay Image
+            # CWDE: commented out to save space on hpg. Consider parameterizing the decision to log this in the future.
+            '''
             self.wandb_run.log(
                 {'validation/overlay': wandb.Image(input_image,
                 caption=img_name,
@@ -142,7 +149,10 @@ class JTMLCallback(Callback):
                     }
                 })}
             )
+            '''
         return super().on_validation_batch_end(trainer, pl_module, outputs, batch, batch_idx, dataloader_idx)
+
+
 
     """
     *********************** Test ***********************
@@ -185,7 +195,7 @@ class JTMLCallback(Callback):
             input_image = batch['image'][idx][0]
             label_image = batch['label'][idx][0]
             output_image = torch.round(test_outputs[idx][0])
-            
+
             # Inputs
             wandb_input = wandb.Image(input_image, caption=img_name)
             self.wandb_run.log({'test/input_image': wandb_input})
@@ -194,8 +204,18 @@ class JTMLCallback(Callback):
             wandb_label = wandb.Image(label_image, caption=img_name)
             self.wandb_run.log({'test/input_label': wandb_label})
             
+            # Formatting for image. Depending on the Architecture saved in the ckpt, extra image processing may be necessary before conversion
+            # into a WandB Image object. Do this by adding a case for your architecture to the if ladder here, and make sure to specify 
+            # net.'ARCHITECTURE' correctly.
+            proc_output_image = None
+
+            if self.config.net['ARCHITECTURE'] == 'seg_hrnet':
+                proc_output_image = (output_image > 0).type(torch.float32) # safeguard against models that leave background negative.
+            else:
+                proc_output_image = output_image
+
             # Predictions
-            wandb_output = wandb.Image(output_image, caption=img_name)
+            wandb_output = wandb.Image(proc_output_image, caption=img_name)
             self.wandb_run.log({'test/output_image': wandb_output})
             
             # Overlay Image
@@ -220,20 +240,3 @@ class JTMLCallback(Callback):
         self.wandb_run.log(metric_dict)
 
         return super().on_test_batch_end(trainer, pl_module, outputs, batch, batch_idx, dataloader_idx)
-
-        
-
-
-
-
-
-
-
-
-
-"""
-    save_best_val_checkpoint_callback = ModelCheckpoint(monitor='validation/loss',
-                                                        mode='min',
-                                                        dirpath='checkpoints/',
-                                                        filename=wandb_run.name)
-"""

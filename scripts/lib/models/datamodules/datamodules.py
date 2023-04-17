@@ -43,10 +43,16 @@ class SegmentationDataModule(pl.LightningDataModule):
                                         'num_workers': self.num_workers,
                                         'pin_memory': self.pin_memory,
                                         'shuffle': False}
+        # CWDE: data_loader_params for naive test set. TODO: Make sure that these are correct for the naive set.
+        self.naive_data_loader_parameters = { 'batch_size': self.batch_size,
+                                        'num_workers': self.num_workers,
+                                        'pin_memory': self.pin_memory,
+                                        'shuffle': False }
 
         #self.log(batch_size=self.batch_size)
         # other constants
 
+        # CWDE: Likely no longer required since JTMLDataset reads from csv and doesn't take them.
         self.train_set = np.genfromtxt(self.train_data, delimiter=',', dtype=str)
         self.val_set = np.genfromtxt(self.val_data, delimiter=',', dtype=str)
         self.test_set = np.genfromtxt(self.test_data, delimiter=',', dtype=str)
@@ -77,15 +83,22 @@ class SegmentationDataModule(pl.LightningDataModule):
         created_dataset = LitJTMLDataset(dataset)
         """
 
+        transform = self.config.transform
+
         self.training_set = LitJTMLDataset(config=self.config,
-                                            dataset=self.train_set,
-                                            img_dir=self.img_dir)
+                                            evaluation_type='train',
+                                            transform = transform)
         self.validation_set = LitJTMLDataset(config=self.config,
-                                            dataset=self.val_set,
-                                            img_dir=self.img_dir)
+                                            evaluation_type='val',
+                                            transform = transform)
         self.test_set = LitJTMLDataset(config=self.config,
-                                            dataset=self.test_set,
-                                            img_dir=self.img_dir)
+                                            evaluation_type='test',
+                                            transform = transform)
+
+        # CWDE: add the naive set from Sasank's new data following the format of the others.
+        self.naive_set = LitJTMLDataset(config = self.config,
+                                        evaluation_type = 'naive',
+                                        transform = transform)
 
         return
 
@@ -97,3 +110,7 @@ class SegmentationDataModule(pl.LightningDataModule):
 
     def test_dataloader(self):
         return torch.utils.data.DataLoader(self.test_set, **self.test_data_loader_parameters)
+    
+    # CWDE: Loader for naive test set
+    def naive_dataloader(self):
+        return torch.utils.data.DataLoader(self.naive_set, **self.naive_data_loader_parameters)

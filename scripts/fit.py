@@ -25,13 +25,16 @@ from build import build_model
 from lib.models.datamodules.datamodule_selector import DataModuleSelector
 from lib.models.nets.architecture_selector import ArchitectureSelector
 
+from pytorch_lightning.callbacks.early_stopping import EarlyStopping
+
 """
 The main function contains the neural network-related code.
 """
 def main(config, wandb_run):
 
-    # The DataModule object loads the data from CSVs, calls the JTMLDataset to get data, and creates the dataloaders.
-    #CWDE: 2-23-23 Changed to use DataModuleSelector
+    """
+    The DataModule object loads the data from CSVs, calls the JTMLDataset to get data, and creates the dataloaders.
+    """
     data_selector = DataModuleSelector(config = config)
     data_module = data_selector.get_datamodule()
     
@@ -40,39 +43,51 @@ def main(config, wandb_run):
     Call to Build is made inside of Architecture Selector
     """
     model = ArchitectureSelector(config, wandb_run).get_architecture()
-    # This is a callback that should help us with stopping validation when it's time but isn't working.
-    #save_best_val_checkpoint_callback = ModelCheckpoint(monitor='validation/loss',
-    #                                                    mode='min',
-    #                                                    dirpath='checkpoints/',
-    #                                                    filename=wandb_run.name)
-    #                                                    #filename=wandb.run.name)
+    
+    """
+    Construct callbacks 
+    """
+    save_best_val_checkpoint_callback = ModelCheckpoint(monitor='val_loss',
+                                                        mode='min',
+                                                        dirpath=CKPT_DIR,
+                                                        save_top_k = config.init['SAVE_TOP_K'],
+                                                        filename=config.init['WANDB_RUN_GROUP'] + config.init['MODEL_NAME'] +'_best')
+    
+    jtml_callback = JTMLCallback(config, wandb_run)
+    
 
+    """
+    Construct pl.Trainer. This will train the architecture made by architecture selector.
+    """
     # Our trainer object contains a lot of important info.
     trainer = pl.Trainer(
         # If the below line is an error, change it to cpu and 1 device
-        accelerator='gpu',
-        # accelerator='cpu',
-        devices=-1,     # use all available devices (GPUs)
+        accelerator='gpu',      # alternatively: accelerator='cpu',
+        devices=-1,             # use all available devices (GPUs)
         # devices=1,
         auto_select_gpus=True,  # helps use all GPUs, not quite understood...
         #logger=wandb_logger,   # tried to use a WandbLogger object. Hasn't worked...
         default_root_dir=os.getcwd(),
-        callbacks=[JTMLCallback(config, wandb_run)],    # pass in the callbacks we want
-        #callbacks=[JTMLCallback(config, wandb_run), save_best_val_checkpoint_callback],
+        callbacks=[jtml_callback, save_best_val_checkpoint_callback],    # pass in the callbacks we want
         fast_dev_run=config.init['FAST_DEV_RUN'],
         max_epochs=config.init['MAX_EPOCHS'],
         max_steps=config.init['MAX_STEPS'],
         strategy=config.init['STRATEGY'],
-        check_val_every_n_epoch=5)
+        check_val_every_n_epoch=config.init['VAL_CHECK_INTERVAL'])
         #val_check_interval=config.init['MAX_STEPS'])
     
+    """
+    Fit model
+    """
     # This is the step where everything happens.
     # Fitting includes both training and validation.
     trainer.fit(model, data_module)
 
-    # TODO: Are the trainer and Wandb doing the same thing/overwriting the checkpoint?
+    """
+    Save final checkpoint
+    """
     #Save model using .ckpt file format. This includes .pth info and other (hparams) info.
-    trainer.save_checkpoint(CKPT_DIR + config.init['WANDB_RUN_GROUP'] + config.init['MODEL_NAME'] + '.ckpt')
+    trainer.save_checkpoint(CKPT_DIR + config.init['WANDB_RUN_GROUP'] + config.init['MODEL_NAME'] + '_final.ckpt')
     
     # Save model using Wandb
     wandb.save(CKPT_DIR + config.init['WANDB_RUN_GROUP'] + '/' + config.init['MODEL_NAME'] + '.ckpt')
@@ -110,10 +125,9 @@ if __name__ == '__main__':
         #dir='logs/'
         #save_dir='/logs/'
     )
-    #wandb_placeholder = wandb.init()
 
+    # WARNING: If you receive Errno 28 on hpg, this means that you are out of memory. You will need to cull local wandb files/ckpts to continue.
     main(config, wandb_run)
-    #main(config, wandb_placeholder)
 
     # Sync and close the Wandb logging. Good to have for DDP, I believe.
     wandb.finish()
