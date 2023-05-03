@@ -96,6 +96,18 @@ class JTMLCallback(Callback):
         return super().on_validation_batch_start(trainer, pl_module, batch, batch_idx, dataloader_idx)
     """
     
+    """
+    Zach Curran
+
+    Inputs: Current validation batch
+
+    Outputs: Logs validation batch info to wandb
+
+    Rationale: Used to help visualize validation results
+
+    Future: Create a parameter to determine whether or not to log images
+
+    """
     def on_validation_batch_end(self, trainer: "pl.Trainer", pl_module: "pl.LightningModule", outputs, batch, batch_idx: int, dataloader_idx: int) -> None:
         # TODO: Is outputs always just 1 loss value? If not, this might break bc it assumes outputs is comparable to min_val_loss
         if outputs.item() < self.min_val_loss:
@@ -182,6 +194,18 @@ class JTMLCallback(Callback):
         return super().on_test_batch_start(trainer, pl_module, batch, batch_idx)
     """
 
+    """
+    Zach Curran
+
+    Inputs: Current test batch
+
+    Outputs: Logs test batch info to wandb
+
+    Rationale: Used to help visualize test results
+
+    Future: Create a parameter to determine whether or not to log images
+
+    """
     def on_test_batch_end(self, trainer: "pl.Trainer", pl_module: "pl.LightningModule", outputs, batch, batch_idx: int, dataloader_idx) -> None:
         self.wandb_run.log({'test/loss': outputs.item()})
 

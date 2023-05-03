@@ -10,6 +10,14 @@ from lib.models.backbones.backbone_selector import BackboneSelector
 from lib.models.backbones.hrt.hrt_config import MODEL_CONFIGS as model_configs
 from lib.models.loss.loss_selector import LossSelector 
 
+"""
+Zach Curran
+Inputs: Config
+Outputs: HRNet Segmentation Net architecture
+Rationale: SegmentationNetModule class defines the HRT segmentation architecture
+Future: Edit training / validation steps for performing multi-class segmentation
+"""
+
 # cobbling together hrt for now TODO: Cleanup
 class SegmentationNetModule(pl.LightningModule):    
     def __init__(self, config, wandb_run, learning_rate=1e-3):
@@ -49,6 +57,13 @@ class SegmentationNetModule(pl.LightningModule):
         return optimizer
 
     def training_step(self, train_batch, batch_idx):
+        """
+        Zach Curran
+        Inputs: Current train batch (tensor)
+        Outputs: Training loss for this batch
+        Rationale: Used to determine the training loss from this training batch
+        Future: May need to alter the loss function for performing multi-class segmentation
+        """
         training_batch, training_batch_labels = train_batch['image'], train_batch['label']
         x = training_batch
         print("Training batch is on device " + str(x.get_device()))         # testing line
@@ -63,6 +78,13 @@ class SegmentationNetModule(pl.LightningModule):
         return loss
 
     def validation_step(self, validation_batch, batch_idx):
+        """
+        Zach Curran
+        Inputs: Current train batch (tensor)
+        Outputs: Training loss for this batch
+        Rationale: Used to determine the training loss from this training batch
+        Future: May need to alter the loss function for performing multi-class segmentation
+        """
         val_batch, val_batch_labels = validation_batch['image'], validation_batch['label']
         x = val_batch
         print("Validation batch is on device " + str(x.get_device()))       # testing line
@@ -79,6 +101,13 @@ class SegmentationNetModule(pl.LightningModule):
         return loss
 
     def test_step(self, test_batch, batch_idx):
+        """
+        Zach Curran
+        Inputs: Current test batch (tensor)
+        Outputs: Testing loss for this batch
+        Rationale: Used to determine the test loss from this test batch
+        Future: May need to alter the loss function for performing multi-class segmentation
+        """
         test_batch, test_batch_labels = test_batch['image'], test_batch['label']
         x = test_batch
         test_output = self.pose_hrt(x)

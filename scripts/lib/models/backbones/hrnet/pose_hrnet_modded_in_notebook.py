@@ -14,6 +14,11 @@ import logging
 import torch
 import torch.nn as nn
 
+"""
+Zach Curran
+Rationale: Contains the PoseHighResolutionNet class and the subclasses used within it which make up HRNet
+Future: Adapted directly from HRNet source code so no change is likely needed
+"""
 
 BN_MOMENTUM = 0.1
 logger = logging.getLogger(__name__)

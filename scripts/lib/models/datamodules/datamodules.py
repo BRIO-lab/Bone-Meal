@@ -12,7 +12,11 @@ import cv2
 
 from JTMLDataset import LitJTMLDataset
 
-
+"""
+Zach Curran
+Rationale: Create the segmentation data module based on the provided config dictionary
+Future: This process should be able to remain the same but the data loader functions may need to be altered to remove one hot encoding (to allow for multiclass prediction)
+"""
 class SegmentationDataModule(pl.LightningDataModule):
     def __init__(self, config):
         super().__init__()

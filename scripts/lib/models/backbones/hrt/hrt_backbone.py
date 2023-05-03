@@ -20,6 +20,11 @@ blocks_dict = {
 
 BN_MOMENTUM = 0.1
 
+"""
+Zach Curran
+Rationale: Contains the HighResolutionTransformerModule class and the subclasses used within it which make up HRT
+Future: Adapted directly from HRT source code so likely needs no change
+"""
 
 class HighResolutionTransformerModule(nn.Module):
     def __init__(
@@ -606,7 +611,12 @@ class HighResolutionTransformer(nn.Module):
         else:
             return y_list
 
-
+"""
+Zach Curran
+Inputs: Config
+Outputs: HRT backbone
+Rationale: Used to easily pass the HRT backbone (HighResolutionTransformer) to build the architecture
+"""
 # CWDE: Altered to remove dependency on Configer objects 3-3-23
 class HRTBackbone(object):
     def __init__(self, config):

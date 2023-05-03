@@ -20,7 +20,11 @@ from lib.models.tools.module_helper import ModuleHelper
 from lib.models.backbones.hrt.hrt_backbone import HRTBackbone
 from lib.models.backbones.hrt.modules.spatial_ocr_block import SpatialGather_Module, SpatialOCR_Module
 
-
+"""
+Zach Curran
+Rationale: Contains the HRT_SMALL class definition which can be chosen as the backbone for HRT architecture
+Future: Alter segmentation head and forward pass to be able to perform segmentation where pixels can belong to multiple classes
+"""
 class HRT_SMALL_OCR_V2(nn.Module):
     def __init__(self, config):
         super(HRT_SMALL_OCR_V2, self).__init__()
@@ -54,6 +58,13 @@ class HRT_SMALL_OCR_V2(nn.Module):
         )
 
     def segmentation_head(self, input):
+        """
+        Zach Curran
+        Inputs: Output of the default HRT forward pass (tensor)
+        Outputs:  Per class pixel probability prediction
+        Rationale: Contains the HRT_SMALL class definition which can be chosen as the backbone for HRT architecture
+        Future:  Alter to allow segmentation with pixels in multiple classes
+        """
         sig = torch.nn.Sigmoid()
         res = sig(input)
         res = res[:, 0, :, :]
@@ -62,7 +73,15 @@ class HRT_SMALL_OCR_V2(nn.Module):
         res = torch.unsqueeze(res, dim=1)
         return res
 
+
     def forward(self, x_):
+        """
+        Zach Curran
+        Inputs: Input tensor
+        Outputs: Output tensor passed through segmentation_head which provides prediction
+        Rationale: Contains the forward pass for the HRT backbone
+        Future: Alter to allow segmentation with pixels in multiple classes
+        """
         x = self.backbone(x_)
         _, _, h, w = x[0].size()
 
@@ -91,6 +110,11 @@ class HRT_SMALL_OCR_V2(nn.Module):
         return self.segmentation_head(out)
 
 
+"""
+Zach Curran
+Rationale: Contains the HRT_BASE class definition which can be chosen as the backbone for HRT architecture
+Future: Add the segmentation head / forward pass from HRT_SMALL_V2 as only HRT_SMALL_V2 was altered for initial testing
+"""
 class HRT_BASE_OCR_V2(nn.Module):
     def __init__(self, configer):
         super(HRT_BASE_OCR_V2, self).__init__()
@@ -151,6 +175,11 @@ class HRT_BASE_OCR_V2(nn.Module):
         return out_aux, out
 
 
+"""
+Zach Curran
+Rationale: Contains the HRT_SMALL_V3 class definition which can be chosen as the backbone for HRT architecture
+Future: Add the segmentation head / forward pass from HRT_SMALL_V2 as only HRT_SMALL_V2 was altered for initial testing
+"""
 class HRT_SMALL_OCR_V3(nn.Module):
     def __init__(self, configer):
         super(HRT_SMALL_OCR_V3, self).__init__()
@@ -236,6 +265,11 @@ class HRT_SMALL_OCR_V3(nn.Module):
         return out_aux, out
 
 
+"""
+Zach Curran
+Rationale: Contains the HRT_BASE_V3 class definition which can be chosen as the backbone for HRT architecture
+Future: Add the segmentation head / forward pass from HRT_SMALL_V2 as only HRT_SMALL_V2 was altered for initial testing
+"""
 class HRT_BASE_OCR_V3(nn.Module):
     def __init__(self, configer):
         super(HRT_BASE_OCR_V3, self).__init__()

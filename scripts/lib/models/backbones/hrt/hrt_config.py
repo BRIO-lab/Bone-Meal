@@ -10,6 +10,12 @@ from __future__ import print_function
 
 from yacs.config import CfgNode as CN
 
+"""
+Zach Curran
+Rationale: Pre-determined config for the HRT taken from the HRT paper
+Future: Possibly tweaking with the config but likely does not need changes
+"""
+
 # configs for HRT_SMALL
 HRT_SMALL = CN()
 HRT_SMALL.DROP_PATH_RATE = 0.2

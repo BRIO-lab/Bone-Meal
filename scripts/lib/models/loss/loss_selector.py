@@ -6,6 +6,7 @@ from importlib import import_module
 
 """
 LossSelector allows for the selection of a loss function by architectures/modules
+Future: Expand the if ladder for any new loss functions added
 """
 class LossSelector(object):
     def __init__(self, config, module_dict):

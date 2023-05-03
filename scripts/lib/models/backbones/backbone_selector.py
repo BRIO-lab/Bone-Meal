@@ -21,6 +21,14 @@ from lib.models.backbones.hrnet.pose_hrnet_module import SegmentationNetModule, 
 #from lib.models.backbones.swin.swin_backbone import SwinTransformerBackbone
 from lib.utils.tools.logger import Logger as Log
 
+"""
+Zach Curran
+Inputs: Config 
+Outputs: Selected backbone
+Rationale: Used to select the backbone specified in the config dictionary
+Future: Add more choices to account for additional backbones
+"""
+
 class BackboneSelector(object):
     def __init__(self, config):
         self.config = config

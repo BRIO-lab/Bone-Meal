@@ -2,6 +2,13 @@ from lib.models.nets.pose_hrnet_module import SegmentationNetModule as HRNetSegm
 from lib.models.nets.seg_hrt import SegmentationNetModule as HRTSegmentationNetModule
 from build import build_model
 
+"""
+Zach Curran
+Inputs: Config
+Outputs: Selected architecture builder
+Rationale: Builds the chosen architecture from the config dictionary
+Future: Add additional choices for any new architectures
+"""
 
 class ArchitectureSelector():
     def __init__(self, config, wandb):

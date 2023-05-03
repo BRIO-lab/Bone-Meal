@@ -20,6 +20,12 @@ import torch.nn.functional as F
 from lib.utils.tools.logger import Logger as Log
 #from config import config
 
+"""
+Zach Curran
+Rationale: Contains the class definitions of all of the available loss functions
+Future: Add new classes for any new loss functions being used
+"""
+
 class CrossEntropy(nn.Module):
     def __init__(self, ignore_label=-1, weight=None):
         super(CrossEntropy, self).__init__()
